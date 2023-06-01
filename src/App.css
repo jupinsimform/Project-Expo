@@ -1,0 +1,9 @@
+.form-wrapper {
+  height: 100vh;
+}
+
+@media (max-width: 576px) {
+  html {
+    font-size: small;
+  }
+}

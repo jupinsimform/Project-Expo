@@ -1,16 +1,29 @@
-import { useState, ChangeEvent } from "react";
-import { Box, Typography, TextField, Button, Container } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Checkbox,
+  Button,
+  Container,
+} from "@mui/material";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
 
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
 interface UserData {
+  name: string;
   email: string;
   password: string;
+  confirmpassword: string;
 }
 
-function Login() {
+function SignUp() {
   const [userData, setUserData] = useState<UserData>({
+    name: "",
     email: "",
     password: "",
+    confirmpassword: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +32,14 @@ function Login() {
     setUserData(updatedData);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (userData.password === userData.confirmpassword) {
+      alert("Registered Successfully");
+    } else {
+      alert("Password must match");
+    }
+  };
 
   return (
     <Container
@@ -55,38 +75,67 @@ function Login() {
             textAlign: "center",
           }}
         >
-          Login
+          Register
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
             required
-            id="outlined-required-lemail"
+            id="outlined-required-name"
+            label="Name"
+            defaultValue=""
+            fullWidth
+            name="name"
+            sx={{ my: 1 }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            id="outlined-required-email"
             label="Email"
             type="email"
             defaultValue=""
+            fullWidth
+            name="email"
+            sx={{ my: 1 }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            id="outlined-required-password"
+            label="Password"
+            type="password"
+            defaultValue=""
+            name="password"
             fullWidth
             sx={{ my: 1 }}
             onChange={handleChange}
           />
           <TextField
             required
-            id="outlined-required-lpassword"
-            label="Password"
+            id="outlined-required-confirmpassword"
+            label="Confirm Password"
             type="password"
             defaultValue=""
             fullWidth
+            name="confirmpassword"
             sx={{ my: 1 }}
             onChange={handleChange}
           />
+          <Box sx={{ textAlign: "left", my: 1 }}>
+            <Checkbox {...label} />
+            <Typography variant="caption" color="black" gutterBottom>
+              Accept Terms and Conditions
+            </Typography>
+          </Box>
 
           <Button variant="contained" type="submit" fullWidth sx={{ my: 1 }}>
-            Login
+            Register
           </Button>
         </form>
         <Typography variant="h6" color="black" gutterBottom>
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-decoration-none">
-            SignUp
+          Already have an account?{" "}
+          <Link to="/login" className="text-decoration-none">
+            SignIn
           </Link>
         </Typography>
       </Box>
@@ -94,4 +143,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;
