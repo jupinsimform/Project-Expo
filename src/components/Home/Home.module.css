@@ -23,7 +23,7 @@
 
 .left .heading {
   font-weight: bold;
-  color: rgb(104, 186, 241);
+  color: #fff;
   font-size: 3rem;
 }
 
@@ -37,7 +37,7 @@
   border: none;
   outline: none;
   padding: 10px 16px;
-  background-color: rgb(104, 186, 241);
+  background-color: #394955;
   color: #fff;
   border-radius: 5px;
   width: fit-content;
@@ -50,7 +50,8 @@
 }
 
 .left button:hover {
-  background-color: rgb(80, 167, 224);
+  background-color: #9dadbc;
+  color: #000;
 }
 
 .left button:active {
@@ -63,7 +64,7 @@
 
 .right img {
   object-fit: contain;
-  width: 100%;
+  width: 450px;
 }
 
 .body {

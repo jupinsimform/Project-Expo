@@ -1,9 +1,7 @@
-.form-wrapper {
+.spinner {
+  width: 100%;
   height: 100vh;
-}
-
-@media (max-width: 576px) {
-  html {
-    font-size: small;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

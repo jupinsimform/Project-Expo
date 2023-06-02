@@ -1,0 +1,97 @@
+.container {
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    to right bottom,
+    rgb(148, 204, 241),
+    rgb(83, 181, 247)
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  background-color: #fff;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 20px;
+  width: fit-content;
+  min-width: 380px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.smallLink {
+  position: absolute;
+  left: 0%;
+  top: -27px;
+}
+
+.smallLink a {
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.form .heading {
+  font-weight: bold;
+  font-size: 1.6rem;
+}
+
+.form button {
+  border: none;
+  outline: none;
+  padding: 8px 16px;
+  background-color: rgb(119, 190, 238);
+  color: #fff;
+  border-radius: 5px;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 200ms;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.form button:hover {
+  background-color: rgb(83, 181, 247);
+}
+
+.form button:active {
+  transform: translateY(1px);
+}
+
+.form button:disabled {
+  background-color: gray !important;
+}
+
+.form .error {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #f12929;
+  width: 100%;
+  text-align: center;
+}
+
+.form .bottom p {
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.bottom p a {
+  color: rgb(83, 181, 247);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}

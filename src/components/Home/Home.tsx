@@ -1,13 +1,21 @@
 import styles from "./Home.module.css";
 import { ArrowRight } from "react-feather";
 import { useNavigate } from "react-router-dom";
-import HomeImage from "../../assets/home-image.svg";
+import HomeImage from "../../assets/home-image.png";
 
-function Home() {
+interface HomeProps {
+  authenticate?: boolean;
+}
+function Home(props: HomeProps) {
   const navigate = useNavigate();
+  const isauthenticated = props.authenticate ? true : false;
 
   const handleNextButtonClick = () => {
-    navigate("/login");
+    if (isauthenticated) {
+      navigate("/account");
+    } else {
+      navigate("/login");
+    }
   };
   return (
     <div className={styles.container}>
@@ -18,8 +26,8 @@ function Home() {
             One stop destination for all software development Projects
           </p>
           <button onClick={handleNextButtonClick}>
-            Get Started
-            <ArrowRight />{" "}
+            {isauthenticated ? "Manage your Projects" : "Get Started"}
+            <ArrowRight />
           </button>
         </div>
         <div className={styles.right}>
