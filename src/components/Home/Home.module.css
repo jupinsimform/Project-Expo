@@ -63,8 +63,9 @@
 }
 
 .right img {
-  object-fit: contain;
-  width: 450px;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
 }
 
 .body {
@@ -112,4 +113,13 @@
   font-weight: 600;
   font-size: 1rem;
   padding: 20px;
+}
+
+@media (max-width: 845px) {
+  .header {
+    flex-direction: column-reverse;
+  }
+  .left {
+    align-items: center;
+  }
 }

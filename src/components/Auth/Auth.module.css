@@ -44,7 +44,7 @@
   font-size: 1.6rem;
 }
 
-.form button {
+.form .submitbutton {
   border: none;
   outline: none;
   padding: 8px 16px;
@@ -62,15 +62,15 @@
   justify-content: center;
 }
 
-.form button:hover {
+.form .submitbutton:hover {
   background-color: rgb(83, 181, 247);
 }
 
-.form button:active {
+.form .submitbutton:active {
   transform: translateY(1px);
 }
 
-.form button:disabled {
+.form .submitbutton:disabled {
   background-color: gray !important;
 }
 

@@ -1,7 +1,11 @@
 import { useState, FormEvent, ChangeEvent } from "react";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import Swal from "sweetalert2";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, updateUserDatabase } from "../../helpers/db";
-import InputControl from "../InputControl/InputControl";
+// import InputControl from "../InputControl/InputControl";
 import styles from "./Auth.module.css";
 import {
   createUserWithEmailAndPassword,
@@ -18,6 +22,11 @@ interface AuthProps {
   signup?: boolean;
 }
 
+interface EndAdornmentProps {
+  visible: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 function Auth(props: AuthProps) {
   const isSignup = !!props.signup;
   const navigate = useNavigate();
@@ -30,6 +39,35 @@ function Auth(props: AuthProps) {
 
   const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisable] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const EndAdornment = ({ visible, setVisible }: EndAdornmentProps) => {
+    return (
+      <InputAdornment position="end">
+        <IconButton onClick={() => setVisible(!visible)}>
+          {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        </IconButton>
+      </InputAdornment>
+    );
+  };
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true,
+  });
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    property: string
+  ) => {
+    setValues((prev) => ({
+      ...prev,
+      [property]: event.target.value,
+    }));
+  };
 
   const handleSignup = () => {
     if (!values?.name || !values.email || !values.password) {
@@ -45,6 +83,10 @@ function Auth(props: AuthProps) {
           userId
         );
         setSubmitButtonDisable(false);
+        Toast.fire({
+          icon: "success",
+          title: "Your registration was successful!",
+        });
         navigate("/");
       })
       .catch((err) => {
@@ -62,6 +104,10 @@ function Auth(props: AuthProps) {
     signInWithEmailAndPassword(auth, values.email, values.password)
       .then(() => {
         setSubmitButtonDisable(false);
+        Toast.fire({
+          icon: "success",
+          title: "Logged in successfully",
+        });
         navigate("/");
       })
       .catch((err) => {
@@ -89,33 +135,50 @@ function Auth(props: AuthProps) {
         <p className={styles.heading}>{isSignup ? "Signup" : "Login"}</p>
 
         {isSignup && (
-          <InputControl
+          <TextField
+            id="outlined-basic-name"
+            variant="outlined"
             label="Name"
-            placeholder="Enter your name"
+            type="text"
+            required
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setValues((prev) => ({ ...prev, name: e.target.value }))
+              handleInputChange(e, "name")
             }
           />
         )}
-        <InputControl
+        <TextField
+          id="outlined-basic-email"
+          variant="outlined"
           label="Email"
-          placeholder="Enter your email"
+          type="email"
+          required
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setValues((prev) => ({ ...prev, email: e.target.value }))
+            handleInputChange(e, "email")
           }
         />
-        <InputControl
+        <TextField
+          id="outlined-basic-password"
           label="Password"
+          type={visible ? "text" : "password"}
+          required
           placeholder="Enter your password"
+          InputProps={{
+            endAdornment: (
+              <EndAdornment visible={visible} setVisible={setVisible} />
+            ),
+          }}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setValues((prev) => ({ ...prev, password: e.target.value }))
+            handleInputChange(e, "password")
           }
-          isPassword
         />
 
         <p className={styles.error}>{errorMsg}</p>
 
-        <button type="submit" disabled={submitButtonDisabled}>
+        <button
+          type="submit"
+          disabled={submitButtonDisabled}
+          className={styles.submitbutton}
+        >
           {isSignup ? "Signup" : "Login"}
         </button>
 

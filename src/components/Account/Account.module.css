@@ -6,7 +6,7 @@
 
 .header {
   width: 100%;
-  background-color: rgb(171, 216, 247);
+  background-color: rgb(129, 196, 241);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,12 +15,12 @@
 
 .header .heading {
   font-weight: 600;
-  font-size: 2.5rem;
+  margin: 0;
 }
 
 .header .heading span {
-  color: #22c48b;
-  font-size: 2.7;
+  color: #3737fa;
+  font-size: 2.7rem;
   text-transform: capitalize;
 }
 
@@ -40,13 +40,13 @@
 .header .logout {
   color: rgb(51, 51, 51);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   transition: 200ms;
 }
 
 .header .logout:hover,
 .header .logout:hover svg {
-  color: #22c48b;
+  color: #ff3511;
 }
 
 .container .section {
@@ -127,7 +127,8 @@
 }
 
 .profile .right .row {
-  width: 100%;
+  width: 70%;
+  min-width: 350px;
   display: flex;
   gap: 30px;
   align-items: center;
@@ -194,4 +195,56 @@
 
 .project .links svg:hover {
   color: #22c48b;
+}
+
+.savebutton {
+  border: none;
+  outline: none;
+  padding: 8px 16px;
+  background-color: #22c48b;
+  color: #fff;
+  border-radius: 5px;
+  width: fit-content;
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 200ms;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.savebutton:hover {
+  background-color: #33e4a6;
+}
+
+.savebutton:active {
+  transform: translateY(1px);
+}
+
+.savebutton:disabled {
+  background-color: gray !important;
+}
+
+@media (max-width: 620px) {
+  .header .heading span {
+    font-size: 2rem;
+  }
+  .profile {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .profile .right {
+    align-items: center;
+  }
+}
+
+@media (max-width: 376px) {
+  .header .heading span {
+    font-size: 1.5rem;
+  }
+  .profile .right .row {
+    flex-direction: column;
+  }
 }
