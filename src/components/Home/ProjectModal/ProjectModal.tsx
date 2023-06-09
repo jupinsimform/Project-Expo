@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { GitHub, Paperclip } from "react-feather";
-
+import { GitHub, Paperclip, Star } from "react-feather";
+import { updateProjectInDatabase } from "../../../helpers/db";
+import { useState } from "react";
 import Modal from "../../Modal/Modal";
-
 import styles from "./ProjectModal.module.css";
 
 interface Project {
@@ -13,16 +13,32 @@ interface Project {
   link?: string;
   points?: string[];
   pid?: string;
+  starCount?: number;
 }
 
 interface ProjectModalProps {
   details: Project;
   onClose?: () => void;
+  isauthenticated: boolean;
 }
 
 function ProjectModal(props: ProjectModalProps) {
-  const details = props.details;
+  const { details, isauthenticated } = props;
+  const [isStarFilled, setIsStarFilled] = useState(false);
 
+  const toggleStar = async () => {
+    setIsStarFilled((prevValue) => {
+      const updatedValue = !prevValue;
+      const updatedDetails = {
+        ...details,
+        starCount: updatedValue
+          ? (details.starCount || 0) + 1
+          : (details.starCount || 0) - 1,
+      };
+      updateProjectInDatabase(updatedDetails, details.pid!);
+      return updatedValue;
+    });
+  };
   return (
     <Modal onClose={() => (props.onClose ? props.onClose() : "")}>
       <div className={styles.container}>
@@ -45,6 +61,14 @@ function ProjectModal(props: ProjectModalProps) {
               <Link target="_blank" to={`${details.link}`}>
                 <Paperclip />
               </Link>
+              {isauthenticated ? (
+                <Star
+                  onClick={toggleStar}
+                  fill={isStarFilled ? "yellow" : "none"}
+                />
+              ) : (
+                `${details.starCount} ⭐`
+              )}
             </div>
           </div>
           <div className={styles.right}>

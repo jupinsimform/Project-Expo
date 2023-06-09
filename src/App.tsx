@@ -1,7 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 import Auth from "./components/Auth/Auth";
 import Home from "./components/Home/Home";
 import Account from "./components/Account/Account";

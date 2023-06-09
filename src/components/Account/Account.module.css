@@ -6,11 +6,11 @@
 
 .header {
   width: 100%;
-  background-color: rgb(129, 196, 241);
+  background-color: #63b2ff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
+  padding: 20px 30px;
 }
 
 .header .heading {
@@ -19,8 +19,8 @@
 }
 
 .header .heading span {
-  color: #3737fa;
-  font-size: 2.7rem;
+  color: #fff;
+  font-size: 2rem;
   text-transform: capitalize;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .header .logout {
-  color: rgb(51, 51, 51);
+  color: #fff;
   font-weight: 500;
   font-size: 1.1rem;
   transition: 200ms;
@@ -79,6 +79,7 @@
   font-weight: bold;
   font-size: 0.9rem;
   text-align: center;
+  width: 90%;
 }
 
 .profile .left .image {
@@ -86,7 +87,7 @@
   height: 200px;
   width: 200px;
   border-radius: 50%;
-  border: 1px solid #eee;
+  border: 1px solid #88aff7;
 }
 
 .profile .left .image img {
@@ -109,14 +110,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #eee;
+  border: 1px solid #88aff7;
   cursor: pointer;
 }
 
 .profile .left .image .camera svg {
   height: 22px;
   width: 22px;
-  color: #22c48b;
+  color: #81c4f1;
 }
 
 .profile .right {
@@ -162,6 +163,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: center;
+}
+
+.nodata {
+  width: 25%;
 }
 
 .projects .project {
@@ -194,14 +200,14 @@
 }
 
 .project .links svg:hover {
-  color: #22c48b;
+  color: #81c4f1;
 }
 
 .savebutton {
   border: none;
   outline: none;
   padding: 8px 16px;
-  background-color: #22c48b;
+  background-color: #50b4f7;
   color: #fff;
   border-radius: 5px;
   width: fit-content;
@@ -216,7 +222,7 @@
 }
 
 .savebutton:hover {
-  background-color: #33e4a6;
+  background-color: #21a0f5;
 }
 
 .savebutton:active {

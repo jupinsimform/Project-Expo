@@ -5,9 +5,10 @@ import {
   updateProjectInDatabase,
   uploadImage,
 } from "../../../helpers/db";
+import ImagePlaceholder from "../../../assets/image-placeholder.png";
 import { useRef, useState, ChangeEvent } from "react";
 import { X } from "react-feather";
-import { TextField } from "@mui/material";
+import { LinearProgress, TextField } from "@mui/material";
 
 interface ProjectFormProps {
   isEdit: boolean;
@@ -31,9 +32,7 @@ function ProjectForm(props: ProjectFormProps) {
   const defaults = props.default;
 
   const [values, setValues] = useState({
-    thumbnail:
-      defaults?.thumbnail ||
-      "https://www.agora-gallery.com/advice/wp-content/uploads/2015/10/image-placeholder-300x200.png",
+    thumbnail: defaults?.thumbnail || "",
     title: defaults?.title || "",
     overview: defaults?.overview || "",
     github: defaults?.github || "",
@@ -154,13 +153,16 @@ function ProjectForm(props: ProjectFormProps) {
           <div className={styles.left}>
             <div className={styles.image}>
               <img
-                src={values.thumbnail}
+                src={values.thumbnail ? values.thumbnail : ImagePlaceholder}
                 alt="Thumbnail"
                 onClick={() => fileInputRef.current?.click()}
               />
               {imageUploadStarted && (
                 <p>
-                  <span>{imageUploadProgress.toFixed(2)}%</span> Uploaded
+                  <LinearProgress
+                    variant="determinate"
+                    value={imageUploadProgress}
+                  />
                 </p>
               )}
             </div>

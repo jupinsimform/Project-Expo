@@ -2,8 +2,11 @@ import styles from "./Home.module.css";
 import { ArrowRight } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import HomeImage from "../../assets/home-image.svg";
+import { Search } from "react-feather";
+import { InputBase } from "@mui/material";
+import Nodata from "../../assets/nodata.svg";
 import { getAllProjects } from "../../helpers/db";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import ProjectModal from "./ProjectModal/ProjectModal";
 
@@ -26,6 +29,7 @@ function Home(props: HomeProps) {
   const [projects, setProjects] = useState<Project[] | []>([]);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projectDetails, setProjectDetails] = useState<Project | {}>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleNextButtonClick = () => {
     if (isauthenticated) {
@@ -33,6 +37,10 @@ function Home(props: HomeProps) {
     } else {
       navigate("/login");
     }
+  };
+
+  const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
   };
 
   const fetchAllProjects = async () => {
@@ -53,6 +61,14 @@ function Home(props: HomeProps) {
     setProjectDetails(project);
   };
 
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.points?.some((point) =>
+        point.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  );
+
   useEffect(() => {
     fetchAllProjects();
   }, []);
@@ -62,6 +78,7 @@ function Home(props: HomeProps) {
         <ProjectModal
           onClose={() => setShowProjectModal(false)}
           details={projectDetails}
+          isauthenticated={isauthenticated}
         />
       )}
       <div className={styles.header}>
@@ -79,13 +96,28 @@ function Home(props: HomeProps) {
           <img src={HomeImage} alt="Projects" />
         </div>
       </div>
+      <hr />
 
       <div className={styles.body}>
         <p className={styles.title}>All Projects</p>
+        <div className={styles.searchBar}>
+          <div className={styles.searchIcon}>
+            <Search />
+          </div>
+          <InputBase
+            placeholder="Search projects..."
+            value={searchQuery}
+            onChange={handleSearchQueryChange}
+            classes={{
+              root: styles.inputRoot,
+              input: styles.inputInput,
+            }}
+          />
+        </div>
         <div className={styles.projects}>
           {projectsLoaded ? (
-            projects.length > 0 ? (
-              projects.map((item) => (
+            filteredProjects.length > 0 ? (
+              filteredProjects.map((item) => (
                 <div
                   className={styles.project}
                   key={item.pid}
@@ -104,7 +136,7 @@ function Home(props: HomeProps) {
                 </div>
               ))
             ) : (
-              <p>No projects found</p>
+              <img src={Nodata} alt="" className={styles.nodata} />
             )
           ) : (
             <div className="spinner">
@@ -113,6 +145,7 @@ function Home(props: HomeProps) {
           )}
         </div>
       </div>
+      <div className={styles.background_clip}></div>
     </div>
   );
 }

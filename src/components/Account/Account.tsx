@@ -1,7 +1,8 @@
 import styles from "./Account.module.css";
 import { Camera, LogOut, Edit2, Trash, Paperclip, GitHub } from "react-feather";
+import Nodata from "../../assets/nodata.svg";
 import Swal from "sweetalert2";
-import { TextField } from "@mui/material";
+import { LinearProgress, TextField } from "@mui/material";
 import ProjectForm from "./ProjectForm/ProjectForm";
 import { Navigate, Link } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
@@ -161,7 +162,7 @@ function Account(props: AccountProps) {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        Swal.fire("Deleted!", "Your Project has been deleted.", "success");
         await deleteProject(pid);
       }
       fetchAllProjects();
@@ -210,10 +211,11 @@ function Account(props: AccountProps) {
             </div>
             {profileImageUploadStarted ? (
               <p className={styles.progress}>
-                {progress == 100
-                  ? "Getting image url"
-                  : `${progress.toFixed(2)}%
-                uploaded`}
+                <LinearProgress
+                  color="success"
+                  variant="determinate"
+                  value={progress}
+                />
               </p>
             ) : (
               ""
@@ -323,7 +325,7 @@ function Account(props: AccountProps) {
                 </div>
               ))
             ) : (
-              <p>No projects found</p>
+              <img src={Nodata} alt="" className={styles.nodata} />
             )
           ) : (
             <div className="spinner">

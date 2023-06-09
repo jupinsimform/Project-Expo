@@ -2,11 +2,7 @@
   min-height: 100vh;
   height: 100%;
   width: 100%;
-  background: linear-gradient(
-    to right bottom,
-    rgb(148, 204, 241),
-    rgb(83, 181, 247)
-  );
+  background: #63b2ff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -42,18 +38,20 @@
 .form .heading {
   font-weight: bold;
   font-size: 1.6rem;
+  color: #424242;
 }
 
 .form .submitbutton {
   border: none;
   outline: none;
-  padding: 8px 16px;
-  background-color: rgb(119, 190, 238);
+  padding: 9px 16px;
+  background-color: #60aefb;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 10px;
   width: 100%;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 550;
   cursor: pointer;
   transition: 200ms;
   display: flex;
@@ -63,7 +61,7 @@
 }
 
 .form .submitbutton:hover {
-  background-color: rgb(83, 181, 247);
+  scale: 1.01;
 }
 
 .form .submitbutton:active {
@@ -86,11 +84,12 @@
   width: 100%;
   text-align: center;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: #424242;
 }
 
 .bottom p a {
-  color: rgb(83, 181, 247);
+  color: #60aefb;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;

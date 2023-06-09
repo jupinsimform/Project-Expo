@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent, useRef } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import Swal from "sweetalert2";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -30,14 +30,14 @@ interface EndAdornmentProps {
 function Auth(props: AuthProps) {
   const isSignup = !!props.signup;
   const navigate = useNavigate();
-
-  const [values, setValues] = useState<FormValues>({
+  const initialFormValues: FormValues = {
     name: "",
     email: "",
     password: "",
-  });
+  };
+  const formRef = useRef<HTMLFormElement>(null);
+  const [values, setValues] = useState<FormValues>(initialFormValues);
 
-  const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisable] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -57,6 +57,10 @@ function Auth(props: AuthProps) {
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
   });
 
   const handleInputChange = (
@@ -71,7 +75,10 @@ function Auth(props: AuthProps) {
 
   const handleSignup = () => {
     if (!values?.name || !values.email || !values.password) {
-      setErrorMsg("All fields required");
+      Toast.fire({
+        icon: "warning",
+        title: "All fields are requried!",
+      });
       return;
     }
     setSubmitButtonDisable(true);
@@ -91,13 +98,26 @@ function Auth(props: AuthProps) {
       })
       .catch((err) => {
         setSubmitButtonDisable(false);
-        setErrorMsg(err.message);
+        Toast.fire({
+          icon: "error",
+          title: err.message,
+        });
       });
+  };
+
+  const handleFormReset = () => {
+    if (formRef.current) {
+      formRef.current.reset();
+      setValues(initialFormValues);
+    }
   };
 
   const handleLogin = () => {
     if (!values.email || !values.password) {
-      setErrorMsg("All fields required");
+      Toast.fire({
+        icon: "warning",
+        title: "All fields are requried!",
+      });
       return;
     }
     setSubmitButtonDisable(true);
@@ -112,7 +132,10 @@ function Auth(props: AuthProps) {
       })
       .catch((err) => {
         setSubmitButtonDisable(false);
-        setErrorMsg(err.message);
+        Toast.fire({
+          icon: "error",
+          title: err.message,
+        });
       });
   };
 
@@ -128,7 +151,7 @@ function Auth(props: AuthProps) {
 
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={handlesubmit}>
+      <form ref={formRef} className={styles.form} onSubmit={handlesubmit}>
         <p className={styles.smallLink}>
           <Link to="/">{"< Back to Home"}</Link>
         </p>
@@ -138,9 +161,8 @@ function Auth(props: AuthProps) {
           <TextField
             id="outlined-basic-name"
             variant="outlined"
-            label="Name"
+            label="Name *"
             type="text"
-            required
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleInputChange(e, "name")
             }
@@ -149,19 +171,16 @@ function Auth(props: AuthProps) {
         <TextField
           id="outlined-basic-email"
           variant="outlined"
-          label="Email"
+          label="Email *"
           type="email"
-          required
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             handleInputChange(e, "email")
           }
         />
         <TextField
           id="outlined-basic-password"
-          label="Password"
+          label="Password *"
           type={visible ? "text" : "password"}
-          required
-          placeholder="Enter your password"
           InputProps={{
             endAdornment: (
               <EndAdornment visible={visible} setVisible={setVisible} />
@@ -171,8 +190,6 @@ function Auth(props: AuthProps) {
             handleInputChange(e, "password")
           }
         />
-
-        <p className={styles.error}>{errorMsg}</p>
 
         <button
           type="submit"
@@ -185,11 +202,17 @@ function Auth(props: AuthProps) {
         <div className={styles.bottom}>
           {isSignup ? (
             <p>
-              Already have an account ? <Link to="/login">Login</Link>
+              Already have an account ?{" "}
+              <Link to="/login" onClick={handleFormReset}>
+                Login
+              </Link>
             </p>
           ) : (
             <p>
-              Don't have an account ? <Link to="/signup">SignUp</Link>
+              Don't have an account ?{" "}
+              <Link to="/signup" onClick={handleFormReset}>
+                SignUp
+              </Link>
             </p>
           )}
         </div>
