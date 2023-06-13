@@ -9,6 +9,8 @@ import { getAllProjects } from "../../helpers/db";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import ProjectModal from "./ProjectModal/ProjectModal";
+import { selectAuthenticate } from "../redux/feature/userSlice";
+import { useAppSelector } from "../redux/hooks";
 
 interface Project {
   thumbnail?: string;
@@ -19,12 +21,10 @@ interface Project {
   points?: string[];
   pid?: string;
 }
-interface HomeProps {
-  authenticate?: boolean;
-}
-function Home(props: HomeProps) {
+
+function Home() {
   const navigate = useNavigate();
-  const isauthenticated = props.authenticate ? true : false;
+  const isauthenticated = useAppSelector(selectAuthenticate);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [projects, setProjects] = useState<Project[] | []>([]);
   const [showProjectModal, setShowProjectModal] = useState(false);
@@ -72,13 +72,13 @@ function Home(props: HomeProps) {
   useEffect(() => {
     fetchAllProjects();
   }, []);
+
   return (
     <div className={styles.container}>
       {showProjectModal && (
         <ProjectModal
           onClose={() => setShowProjectModal(false)}
           details={projectDetails}
-          isauthenticated={isauthenticated}
         />
       )}
       <div className={styles.header}>
@@ -96,6 +96,7 @@ function Home(props: HomeProps) {
           <img src={HomeImage} alt="Projects" />
         </div>
       </div>
+
       <hr />
 
       <div className={styles.body}>

@@ -138,6 +138,30 @@ function ProjectForm(props: ProjectFormProps) {
     setSetSubmitButtonDisabled(false);
     if (props.onSubmission) props.onSubmission();
     if (props.onClose) props.onClose();
+
+    // Reset form values
+    setValues({
+      thumbnail: "",
+      title: "",
+      overview: "",
+      github: "",
+      link: "",
+      points: ["", ""],
+    });
+  };
+
+  const handleCancel = () => {
+    // Reset form values
+    setValues({
+      thumbnail: "",
+      title: "",
+      overview: "",
+      github: "",
+      link: "",
+      points: ["", ""],
+    });
+
+    if (props.onClose) props.onClose();
   };
 
   return (
@@ -246,10 +270,7 @@ function ProjectForm(props: ProjectFormProps) {
         </div>
         <p className={styles.error}>{errorMessage}</p>
         <div className={styles.footer}>
-          <p
-            className={styles.cancel}
-            onClick={() => (props.onClose ? props.onClose() : "")}
-          >
+          <p className={styles.cancel} onClick={handleCancel}>
             Cancel
           </p>
           <button

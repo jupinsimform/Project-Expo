@@ -4,40 +4,27 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./components/Auth/Auth";
 import Home from "./components/Home/Home";
 import Account from "./components/Account/Account";
-import { auth, getUserFromDatabase } from "./helpers/db";
+import { auth } from "./helpers/db";
+import {
+  fetchUserDetails,
+  selectAuthenticate,
+} from "./components/redux/feature/userSlice";
+import { useAppDispatch, useAppSelector } from "./components/redux/hooks";
 import { ClipLoader } from "react-spinners";
 
-interface UserDetails {
-  profileImage?: string;
-  name?: string;
-  designation?: string;
-  github?: string;
-  linkedin?: string;
-  uid: string;
-}
-
 function App() {
-  // const signup = true;
-  const [isAuthenticated, setisAuthenticated] = useState(false);
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectAuthenticate);
 
-  const fetchUserDetails = async (uid: string) => {
-    const userDetail = (await getUserFromDatabase(uid)) as UserDetails | null;
-    if (userDetail) {
-      setUserDetails(userDetail);
-      setIsDataLoaded(true);
-    }
-  };
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     const listener = auth.onAuthStateChanged((user) => {
       if (!user) {
         setIsDataLoaded(true);
-        setisAuthenticated(false);
       } else {
-        setisAuthenticated(true);
-        fetchUserDetails(user.uid);
+        dispatch(fetchUserDetails(user.uid));
+        setIsDataLoaded(true);
       }
     });
     return () => listener();
@@ -53,16 +40,8 @@ function App() {
               <Route path="/signup" element={<Auth signup />} />
             </>
           )}
-          <Route path="/" element={<Home authenticate={isAuthenticated} />} />
-          <Route
-            path="/account"
-            element={
-              <Account
-                userDetails={userDetails!}
-                authenticate={isAuthenticated}
-              />
-            }
-          />
+          <Route path="/" element={<Home />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       ) : (

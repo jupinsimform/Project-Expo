@@ -132,7 +132,7 @@
   border: none;
   outline: none;
   padding: 8px 16px;
-  background-color: #81c4f1;
+  background-color: #50b4f7;
   color: #fff;
   border-radius: 5px;
   width: fit-content;
@@ -147,7 +147,7 @@
 }
 
 .savebutton:hover {
-  background-color: #66bcf5;
+  background-color: #21a0f5;
 }
 
 .savebutton:active {

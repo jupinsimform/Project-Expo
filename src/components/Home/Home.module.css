@@ -143,6 +143,7 @@
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
+  transition: 0.2s ease-in-out;
 }
 
 .project .image {
@@ -160,10 +161,19 @@
   font-weight: 600;
   font-size: 1.2rem;
   padding: 20px;
+  transition: 0.2s ease-in-out;
 }
 
 .nodata {
   width: 25%;
+}
+
+.projects .project:hover {
+  transform: scale(1.03);
+}
+
+.projects .project:hover .title {
+  color: #63b2ff;
 }
 
 @media (max-width: 845px) {

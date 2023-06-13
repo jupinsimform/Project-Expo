@@ -1,16 +1,12 @@
 import { useState, FormEvent, ChangeEvent, useRef } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { loginUser, signUpUser, resetUser } from "../redux/feature/userSlice";
 import Swal from "sweetalert2";
+import { useAppDispatch } from "../redux/hooks";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, updateUserDatabase } from "../../helpers/db";
-// import InputControl from "../InputControl/InputControl";
 import styles from "./Auth.module.css";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 
 interface FormValues {
   name: string;
@@ -30,6 +26,7 @@ interface EndAdornmentProps {
 function Auth(props: AuthProps) {
   const isSignup = !!props.signup;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const initialFormValues: FormValues = {
     name: "",
     email: "",
@@ -74,7 +71,7 @@ function Auth(props: AuthProps) {
   };
 
   const handleSignup = () => {
-    if (!values?.name || !values.email || !values.password) {
+    if (!values.name || !values.email || !values.password) {
       Toast.fire({
         icon: "warning",
         title: "All fields are requried!",
@@ -82,13 +79,11 @@ function Auth(props: AuthProps) {
       return;
     }
     setSubmitButtonDisable(true);
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then(async (response) => {
-        const userId = response.user.uid;
-        await updateUserDatabase(
-          { name: values.name, email: values.email },
-          userId
-        );
+    dispatch(signUpUser(values))
+      .then((data) => {
+        if (data.meta.requestStatus == "rejected") {
+          throw new Error(data.payload as string);
+        }
         setSubmitButtonDisable(false);
         Toast.fire({
           icon: "success",
@@ -100,7 +95,7 @@ function Auth(props: AuthProps) {
         setSubmitButtonDisable(false);
         Toast.fire({
           icon: "error",
-          title: err.message,
+          title: err,
         });
       });
   };
@@ -110,6 +105,7 @@ function Auth(props: AuthProps) {
       formRef.current.reset();
       setValues(initialFormValues);
     }
+    dispatch(resetUser());
   };
 
   const handleLogin = () => {
@@ -121,8 +117,11 @@ function Auth(props: AuthProps) {
       return;
     }
     setSubmitButtonDisable(true);
-    signInWithEmailAndPassword(auth, values.email, values.password)
-      .then(() => {
+    dispatch(loginUser(values))
+      .then((data) => {
+        if (data.meta.requestStatus == "rejected") {
+          throw new Error(data.payload as string);
+        }
         setSubmitButtonDisable(false);
         Toast.fire({
           icon: "success",
@@ -134,7 +133,7 @@ function Auth(props: AuthProps) {
         setSubmitButtonDisable(false);
         Toast.fire({
           icon: "error",
-          title: err.message,
+          title: err,
         });
       });
   };
@@ -159,9 +158,10 @@ function Auth(props: AuthProps) {
 
         {isSignup && (
           <TextField
+            hiddenLabel
             id="outlined-basic-name"
             variant="outlined"
-            label="Name *"
+            placeholder="Enter Name"
             type="text"
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleInputChange(e, "name")
@@ -169,17 +169,20 @@ function Auth(props: AuthProps) {
           />
         )}
         <TextField
+          hiddenLabel
           id="outlined-basic-email"
           variant="outlined"
-          label="Email *"
+          placeholder="Enter email"
           type="email"
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             handleInputChange(e, "email")
           }
         />
         <TextField
+          hiddenLabel
           id="outlined-basic-password"
-          label="Password *"
+          placeholder="Enter Password"
+          variant="outlined"
           type={visible ? "text" : "password"}
           InputProps={{
             endAdornment: (

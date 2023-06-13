@@ -9,12 +9,18 @@ import { ClipLoader } from "react-spinners";
 import { signOut } from "firebase/auth";
 import {
   auth,
-  updateUserDatabase,
   uploadImage,
   getAllProjectsForUser,
   deleteProject,
 } from "../../helpers/db";
 import { useState, useRef, ChangeEvent, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  logout,
+  updateUserDetails,
+  selectAuthenticate,
+  selectUserDetails,
+} from "../redux/feature/userSlice";
 
 interface Project {
   thumbnail?: string;
@@ -26,23 +32,11 @@ interface Project {
   pid?: string;
 }
 
-interface UserDetails {
-  profileImage?: string;
-  name?: string;
-  designation?: string;
-  github?: string;
-  linkedin?: string;
-  uid: string;
-}
-
-interface AccountProps {
-  userDetails: UserDetails;
-  authenticate: boolean;
-}
-
-function Account(props: AccountProps) {
-  const { userDetails, authenticate } = props;
+function Account() {
+  const userDetails = useAppSelector(selectUserDetails);
+  const authenticate = useAppSelector(selectAuthenticate);
   const imagePicker = useRef<HTMLInputElement>(null);
+  const dispatch = useAppDispatch();
 
   const [progress, setProgress] = useState(0);
   const [profileImageUrl, setProfileImageUrl] = useState(
@@ -70,6 +64,7 @@ function Account(props: AccountProps) {
 
   const handleLogout = async () => {
     await signOut(auth);
+    dispatch(logout());
   };
 
   const handleCameraClick = () => {
@@ -78,11 +73,21 @@ function Account(props: AccountProps) {
     }
   };
 
-  const updateProfileImageToDatabase = async (url: string) => {
-    await updateUserDatabase(
-      { ...userProfileValues, profileImage: url },
-      userDetails.uid
+  const updateProfileImageToDatabase = (url: string) => {
+    const updatedUserProfile = {
+      ...userProfileValues,
+      email: userDetails.email,
+      uid: userDetails.uid,
+      profileImage: url,
+    };
+
+    dispatch(
+      updateUserDetails({ user: updatedUserProfile, uid: userDetails.uid! })
     );
+    setUserProfileValues((prev) => ({
+      ...prev,
+      profileImage: url,
+    }));
   };
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -120,20 +125,40 @@ function Account(props: AccountProps) {
     }));
   };
 
-  const saveDetailsToDatabase = async () => {
+  const saveDetailsToDatabase = () => {
     if (!userProfileValues.name) {
       setErrorMessage("Name required");
       return;
     }
 
     setSaveButtonDisabled(true);
-    await updateUserDatabase({ ...userProfileValues }, userDetails.uid);
+    const updatedUserProfile = {
+      ...userProfileValues,
+      email: userDetails.email,
+      profileImage:
+        userDetails.profileImage ||
+        "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg",
+      uid: userDetails.uid,
+    };
+
+    dispatch(
+      updateUserDetails({
+        user: updatedUserProfile,
+        uid: userDetails.uid!,
+      })
+    );
     setSaveButtonDisabled(false);
     setShowSaveDetailsButton(false);
+    setErrorMessage("");
+  };
+
+  const handleAddProject = () => {
+    setEditProject({}); // Reset the editProject state variable
+    setShowProjectForm(true);
   };
 
   const fetchAllProjects = async () => {
-    const result = await getAllProjectsForUser(userDetails.uid);
+    const result = await getAllProjectsForUser(userDetails.uid!);
     if (!result) {
       setProjectsLoaded(true);
       return;
@@ -179,7 +204,7 @@ function Account(props: AccountProps) {
         <ProjectForm
           onSubmission={fetchAllProjects}
           onClose={() => setShowProjectForm(false)}
-          uid={userDetails.uid}
+          uid={userDetails.uid!}
           isEdit={isEditProjectModal}
           default={editProject}
         />
@@ -293,10 +318,7 @@ function Account(props: AccountProps) {
       <div className={styles.section}>
         <div className={styles.projectsHeader}>
           <div className={styles.title}>Your Projects</div>
-          <button
-            className={styles.savebutton}
-            onClick={() => setShowProjectForm(true)}
-          >
+          <button className={styles.savebutton} onClick={handleAddProject}>
             Add Project
           </button>
         </div>

@@ -4,6 +4,8 @@ import { updateProjectInDatabase } from "../../../helpers/db";
 import { useState } from "react";
 import Modal from "../../Modal/Modal";
 import styles from "./ProjectModal.module.css";
+import { useAppSelector } from "../../redux/hooks";
+import { selectAuthenticate } from "../../redux/feature/userSlice";
 
 interface Project {
   thumbnail?: string;
@@ -19,11 +21,11 @@ interface Project {
 interface ProjectModalProps {
   details: Project;
   onClose?: () => void;
-  isauthenticated: boolean;
 }
 
 function ProjectModal(props: ProjectModalProps) {
-  const { details, isauthenticated } = props;
+  const { details } = props;
+  const isauthenticated = useAppSelector(selectAuthenticate);
   const [isStarFilled, setIsStarFilled] = useState(false);
 
   const toggleStar = async () => {
