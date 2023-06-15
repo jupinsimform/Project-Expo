@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
 import { GitHub, Paperclip, Star } from "react-feather";
-import { updateProjectInDatabase } from "../../../helpers/db";
-import { useState } from "react";
+import { database } from "../../../helpers/db";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 import Modal from "../../Modal/Modal";
 import styles from "./ProjectModal.module.css";
 import { useAppSelector } from "../../redux/hooks";
-import { selectAuthenticate } from "../../redux/feature/userSlice";
+import {
+  selectAuthenticate,
+  selectUserDetails,
+} from "../../redux/feature/userSlice";
+import { useState } from "react";
 
 interface Project {
   thumbnail?: string;
@@ -15,32 +20,58 @@ interface Project {
   link?: string;
   points?: string[];
   pid?: string;
-  starCount?: number;
+  likes?: string[];
 }
 
 interface ProjectModalProps {
   details: Project;
   onClose?: () => void;
+  fetchAllProjects: () => Promise<void>;
 }
 
 function ProjectModal(props: ProjectModalProps) {
   const { details } = props;
   const isauthenticated = useAppSelector(selectAuthenticate);
-  const [isStarFilled, setIsStarFilled] = useState(false);
+  const userDetails = useAppSelector(selectUserDetails);
+  const [starFilled, setStarFilled] = useState(
+    details.likes?.includes(userDetails.uid!)
+  );
+  const [starCount, setStarCount] = useState(details.likes!.length);
+
+  const handleStar = () => {
+    toast.info("you first have to login!");
+  };
 
   const toggleStar = async () => {
-    setIsStarFilled((prevValue) => {
-      const updatedValue = !prevValue;
-      const updatedDetails = {
-        ...details,
-        starCount: updatedValue
-          ? (details.starCount || 0) + 1
-          : (details.starCount || 0) - 1,
-      };
-      updateProjectInDatabase(updatedDetails, details.pid!);
-      return updatedValue;
-    });
+    const likesRef = doc(database, "projects", details.pid!);
+
+    if (starFilled) {
+      updateDoc(likesRef, {
+        likes: arrayRemove(userDetails.uid),
+      })
+        .then(() => {
+          setStarFilled(false);
+          setStarCount(starCount - 1);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      updateDoc(likesRef, {
+        likes: arrayUnion(userDetails.uid),
+      })
+        .then(() => {
+          setStarFilled(true);
+          setStarCount(starCount + 1);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+
+    await props.fetchAllProjects();
   };
+
   return (
     <Modal onClose={() => (props.onClose ? props.onClose() : "")}>
       <div className={styles.container}>
@@ -63,14 +94,23 @@ function ProjectModal(props: ProjectModalProps) {
               <Link target="_blank" to={`${details.link}`}>
                 <Paperclip />
               </Link>
-              {isauthenticated ? (
-                <Star
-                  onClick={toggleStar}
-                  fill={isStarFilled ? "yellow" : "none"}
-                />
-              ) : (
-                `${details.starCount} ⭐`
-              )}
+              <div className={styles.starDetails}>
+                {isauthenticated ? (
+                  <>
+                    <p className={styles.star}>{starCount}</p>
+                    <Star
+                      onClick={toggleStar}
+                      // color={starFilled ? "yellow" : "#63b2ff"}
+                      fill={starFilled ? "#FFCC00" : "none"}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <p className={styles.star}>{starCount}</p>
+                    <Star onClick={handleStar} />
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className={styles.right}>
@@ -87,4 +127,5 @@ function ProjectModal(props: ProjectModalProps) {
     </Modal>
   );
 }
+
 export default ProjectModal;

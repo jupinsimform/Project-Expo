@@ -1,7 +1,9 @@
 import styles from "./Account.module.css";
 import { Camera, LogOut, Edit2, Trash, Paperclip, GitHub } from "react-feather";
 import Nodata from "../../assets/nodata.svg";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { LinearProgress, TextField } from "@mui/material";
 import ProjectForm from "./ProjectForm/ProjectForm";
 import { Navigate, Link } from "react-router-dom";
@@ -177,20 +179,22 @@ function Account() {
   };
 
   const handleDeletion = (pid: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        Swal.fire("Deleted!", "Your Project has been deleted.", "success");
-        await deleteProject(pid);
-      }
-      fetchAllProjects();
+    confirmAlert({
+      title: "Confirm to submit",
+      message: "Are you sure to delete this.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            await deleteProject(pid);
+            fetchAllProjects();
+            toast.success('Deleted!", "Your Project has been deleted.');
+          },
+        },
+        {
+          label: "No",
+        },
+      ],
     });
   };
 
@@ -204,7 +208,6 @@ function Account() {
         <ProjectForm
           onSubmission={fetchAllProjects}
           onClose={() => setShowProjectForm(false)}
-          uid={userDetails.uid!}
           isEdit={isEditProjectModal}
           default={editProject}
         />

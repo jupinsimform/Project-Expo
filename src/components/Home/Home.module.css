@@ -76,7 +76,7 @@
 }
 
 .right {
-  max-width: 45%;
+  max-width: 60%;
 }
 
 .right img {
@@ -182,6 +182,10 @@
   }
   .left {
     align-items: center;
+    text-align: center;
+  }
+  .right {
+    max-width: 100%;
   }
   .background_clip {
     clip-path: polygon(14% 0, 100% 45%, 100% 0);

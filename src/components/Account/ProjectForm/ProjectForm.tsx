@@ -1,14 +1,15 @@
 import Modal from "../../Modal/Modal";
 import styles from "./ProjectForm.module.css";
-import {
-  addProjectInDatabase,
-  updateProjectInDatabase,
-  uploadImage,
-} from "../../../helpers/db";
+import { uploadImage } from "../../../helpers/db";
+import { addOrUpdateProject } from "../../redux/feature/projectSlice";
+import { useAppDispatch } from "../../redux/hooks";
+import { toast } from "react-toastify";
 import ImagePlaceholder from "../../../assets/image-placeholder.png";
 import { useRef, useState, ChangeEvent } from "react";
 import { X } from "react-feather";
 import { LinearProgress, TextField } from "@mui/material";
+import { useAppSelector } from "../../redux/hooks";
+import { selectUserDetails } from "../../redux/feature/userSlice";
 
 interface ProjectFormProps {
   isEdit: boolean;
@@ -21,12 +22,13 @@ interface ProjectFormProps {
     points?: string[];
     pid?: string;
   };
-  uid: string;
   onSubmission?: () => void;
   onClose?: () => void;
 }
 
 function ProjectForm(props: ProjectFormProps) {
+  const { uid } = useAppSelector(selectUserDetails);
+  const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isEdit = props.isEdit ? true : false;
   const defaults = props.default;
@@ -38,6 +40,7 @@ function ProjectForm(props: ProjectFormProps) {
     github: defaults?.github || "",
     link: defaults?.link || "",
     points: defaults?.points || ["", ""],
+    likes: [],
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [imageUploadStarted, setImageUploadStarted] = useState(false);
@@ -102,7 +105,7 @@ function ProjectForm(props: ProjectFormProps) {
 
     if (!values.thumbnail) {
       isValid = false;
-      setErrorMessage("Thumbnail for project is required");
+      setErrorMessage("photo for project is required");
     } else if (!values.github) {
       isValid = false;
       setErrorMessage("Project's repository link required");
@@ -125,29 +128,76 @@ function ProjectForm(props: ProjectFormProps) {
     return isValid;
   };
 
+  // const handleSubmission = async () => {
+  //   if (!validateForm()) return;
+
+  //   setSetSubmitButtonDisabled(true);
+  //   if (isEdit)
+  //     await updateProjectInDatabase({ ...values, refUser: uid }, defaults.pid!);
+  //   else await addProjectInDatabase({ ...values, refUser: uid });
+  //   setSetSubmitButtonDisabled(false);
+  //   if (props.onSubmission) {
+  //     props.onSubmission();
+  //     Toast.fire({
+  //       icon: "success",
+  //       title: "Success! Your project has been added. Keep up the great work👍",
+  //     });
+  //   }
+  //   if (props.onClose) props.onClose();
+
+  //   // Reset form values
+  //   setValues({
+  //     thumbnail: "",
+  //     title: "",
+  //     overview: "",
+  //     github: "",
+  //     link: "",
+  //     points: ["", ""],
+  //     likes: [],
+  //   });
+  // };
+
   const handleSubmission = async () => {
     if (!validateForm()) return;
 
     setSetSubmitButtonDisabled(true);
-    if (isEdit)
-      await updateProjectInDatabase(
-        { ...values, refUser: props.uid },
-        defaults.pid!
-      );
-    else await addProjectInDatabase({ ...values, refUser: props.uid });
-    setSetSubmitButtonDisabled(false);
-    if (props.onSubmission) props.onSubmission();
-    if (props.onClose) props.onClose();
 
-    // Reset form values
-    setValues({
-      thumbnail: "",
-      title: "",
-      overview: "",
-      github: "",
-      link: "",
-      points: ["", ""],
-    });
+    try {
+      if (isEdit) {
+        await dispatch(
+          addOrUpdateProject({ ...values, refUser: uid, pid: defaults.pid })
+        );
+      } else {
+        await dispatch(addOrUpdateProject({ ...values, refUser: uid }));
+      }
+
+      setSetSubmitButtonDisabled(false);
+
+      if (props.onSubmission) {
+        props.onSubmission();
+        if (isEdit) {
+          toast.success("Success! Your project has been updated.");
+        } else {
+          toast.success(
+            "Success! Your project has been added. Keep up the great work👍"
+          );
+        }
+      }
+
+      if (props.onClose) props.onClose();
+
+      setValues({
+        thumbnail: "",
+        title: "",
+        overview: "",
+        github: "",
+        link: "",
+        points: ["", ""],
+        likes: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCancel = () => {
@@ -159,6 +209,7 @@ function ProjectForm(props: ProjectFormProps) {
       github: "",
       link: "",
       points: ["", ""],
+      likes: [],
     });
 
     if (props.onClose) props.onClose();

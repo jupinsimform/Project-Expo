@@ -10,7 +10,9 @@ import {
   selectAuthenticate,
 } from "./components/redux/feature/userSlice";
 import { useAppDispatch, useAppSelector } from "./components/redux/hooks";
-import { ClipLoader } from "react-spinners";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PuffLoader } from "react-spinners";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -46,9 +48,21 @@ function App() {
         </Routes>
       ) : (
         <div className="spinner">
-          <ClipLoader color="purple" />
+          <PuffLoader color="#63b2ff" />
         </div>
       )}
+      <ToastContainer
+        position="top-center"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

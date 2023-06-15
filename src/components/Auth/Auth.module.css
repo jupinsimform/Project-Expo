@@ -94,3 +94,9 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+@media (max-width: 400px) {
+  .form {
+    min-width: 340px;
+  }
+}

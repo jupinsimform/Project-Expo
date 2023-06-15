@@ -1,7 +1,7 @@
 import styles from "./Home.module.css";
 import { ArrowRight } from "react-feather";
 import { useNavigate } from "react-router-dom";
-import HomeImage from "../../assets/home-image.svg";
+import HomeImage from "../../assets/home-image.gif";
 import { Search } from "react-feather";
 import { InputBase } from "@mui/material";
 import Nodata from "../../assets/nodata.svg";
@@ -79,6 +79,7 @@ function Home() {
         <ProjectModal
           onClose={() => setShowProjectModal(false)}
           details={projectDetails}
+          fetchAllProjects={fetchAllProjects}
         />
       )}
       <div className={styles.header}>

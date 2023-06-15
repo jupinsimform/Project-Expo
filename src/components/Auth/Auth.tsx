@@ -1,10 +1,9 @@
 import { useState, FormEvent, ChangeEvent, useRef } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { loginUser, signUpUser, resetUser } from "../redux/feature/userSlice";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { useAppDispatch } from "../redux/hooks";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Eye, EyeOff } from "react-feather";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Auth.module.css";
 
@@ -42,23 +41,11 @@ function Auth(props: AuthProps) {
     return (
       <InputAdornment position="end">
         <IconButton onClick={() => setVisible(!visible)}>
-          {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+          {visible ? <Eye /> : <EyeOff />}
         </IconButton>
       </InputAdornment>
     );
   };
-
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top",
-    showConfirmButton: false,
-    timer: 1500,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
-  });
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -72,10 +59,7 @@ function Auth(props: AuthProps) {
 
   const handleSignup = () => {
     if (!values.name || !values.email || !values.password) {
-      Toast.fire({
-        icon: "warning",
-        title: "All fields are requried!",
-      });
+      toast.error("All fields are required!");
       return;
     }
     setSubmitButtonDisable(true);
@@ -85,18 +69,14 @@ function Auth(props: AuthProps) {
           throw new Error(data.payload as string);
         }
         setSubmitButtonDisable(false);
-        Toast.fire({
-          icon: "success",
-          title: "Your registration was successful!",
+        toast.success("Your registration was successful!", {
+          position: "top-right",
         });
         navigate("/");
       })
       .catch((err) => {
         setSubmitButtonDisable(false);
-        Toast.fire({
-          icon: "error",
-          title: err,
-        });
+        toast.error(err);
       });
   };
 
@@ -110,10 +90,7 @@ function Auth(props: AuthProps) {
 
   const handleLogin = () => {
     if (!values.email || !values.password) {
-      Toast.fire({
-        icon: "warning",
-        title: "All fields are requried!",
-      });
+      toast.error("All fields are required!");
       return;
     }
     setSubmitButtonDisable(true);
@@ -123,18 +100,14 @@ function Auth(props: AuthProps) {
           throw new Error(data.payload as string);
         }
         setSubmitButtonDisable(false);
-        Toast.fire({
-          icon: "success",
-          title: "Logged in successfully",
+        toast.success("Logged in successfully", {
+          position: "top-right",
         });
         navigate("/");
       })
       .catch((err) => {
         setSubmitButtonDisable(false);
-        Toast.fire({
-          icon: "error",
-          title: err,
-        });
+        toast.error(err);
       });
   };
 

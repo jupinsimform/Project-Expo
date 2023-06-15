@@ -13,3 +13,9 @@ body {
     font-size: smaller;
   }
 }
+
+@media (max-width: 576px) {
+  html {
+    font-size: x-small;
+  }
+}

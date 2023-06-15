@@ -22,12 +22,12 @@ import {
 } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDbeGfVTPc95VF_5mypbJ-gpVI6F4DUwNM",
-  authDomain: "reactprojectfair.firebaseapp.com",
-  projectId: "reactprojectfair",
-  storageBucket: "reactprojectfair.appspot.com",
-  messagingSenderId: "752301656758",
-  appId: "1:752301656758:web:9d113fc256cda3ed73f417",
+  apiKey: import.meta.env.VITE_APP_APIKEY,
+  authDomain: import.meta.env.VITE_APP_AUHHDOMAIN,
+  projectId: import.meta.env.VITE_APP_PROJECTID,
+  storageBucket: import.meta.env.VITE_APP_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_APP_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_APP_APPID,
 };
 
 const app = initializeApp(firebaseConfig);
