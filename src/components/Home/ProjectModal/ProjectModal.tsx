@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { GitHub, Paperclip, Star } from "react-feather";
-import { database } from "../../../helpers/db";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { updatelikes } from "../../../helpers/db";
+
 import { toast } from "react-toastify";
 import Modal from "../../Modal/Modal";
 import styles from "./ProjectModal.module.css";
@@ -43,30 +43,42 @@ function ProjectModal(props: ProjectModalProps) {
   };
 
   const toggleStar = async () => {
-    const likesRef = doc(database, "projects", details.pid!);
+    // const likesRef = doc(database, "projects", details.pid!);
 
-    if (starFilled) {
-      updateDoc(likesRef, {
-        likes: arrayRemove(userDetails.uid),
-      })
-        .then(() => {
-          setStarFilled(false);
-          setStarCount(starCount - 1);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+    // if (starFilled) {
+    //   updateDoc(likesRef, {
+    //     likes: arrayRemove(userDetails.uid),
+    //   })
+    //     .then(() => {
+    //       setStarFilled(false);
+    //       setStarCount(starCount - 1);
+    //     })
+    //     .catch((e) => {
+    //       console.log(e);
+    //     });
+    // } else {
+    //   updateDoc(likesRef, {
+    //     likes: arrayUnion(userDetails.uid),
+    //   })
+    //     .then(() => {
+    //       setStarFilled(true);
+    //       setStarCount(starCount + 1);
+    //     })
+    //     .catch((e) => {
+    //       console.log(e);
+    //     });
+    // }
+
+    const isAddingLike = !starFilled;
+
+    await updatelikes(details.pid!, isAddingLike, userDetails.uid!);
+
+    if (isAddingLike) {
+      setStarFilled(true);
+      setStarCount(starCount + 1);
     } else {
-      updateDoc(likesRef, {
-        likes: arrayUnion(userDetails.uid),
-      })
-        .then(() => {
-          setStarFilled(true);
-          setStarCount(starCount + 1);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      setStarFilled(false);
+      setStarCount(starCount - 1);
     }
 
     await props.fetchAllProjects();

@@ -6,6 +6,9 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  updateDoc,
+  arrayRemove,
+  arrayUnion,
   addDoc,
   collection,
   query,
@@ -110,6 +113,13 @@ const updateProjectInDatabase = async (project: object, pid: string) => {
   await setDoc(docRef, { ...project });
 };
 
+const updatelikes = async (pid: string, isAddingLike: boolean, uid: string) => {
+  const likesRef = doc(database, "projects", pid);
+
+  const updateAction = isAddingLike ? arrayUnion(uid) : arrayRemove(uid);
+  await updateDoc(likesRef, { likes: updateAction });
+};
+
 const getAllProjects = async () => {
   return await getDocs(collection(database, "projects"));
 };
@@ -133,6 +143,7 @@ export {
   app as default,
   auth,
   database,
+  updatelikes,
   updateUserDatabase,
   getUserFromDatabase,
   uploadImage,

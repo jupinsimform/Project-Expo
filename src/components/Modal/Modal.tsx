@@ -1,16 +1,22 @@
 import styles from "./Modal.module.css";
 
-function Modal(props: any) {
+interface ModalProps {
+  onClose?: () => void;
+  children: React.ReactNode;
+}
+
+function Modal(props: ModalProps) {
+  const { onClose, children } = props;
   return (
     <div
       className={styles.container}
-      onClick={() => (props.onClose ? props.onClose() : "")}
+      onClick={() => (onClose ? onClose() : "")}
     >
       <div
         className={styles.inner}
         onClick={(event) => event.stopPropagation()}
       >
-        {props.children}
+        {children}
       </div>
     </div>
   );

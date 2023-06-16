@@ -7,7 +7,7 @@ import { InputBase } from "@mui/material";
 import Nodata from "../../assets/nodata.svg";
 import { getAllProjects } from "../../helpers/db";
 import { ChangeEvent, useEffect, useState } from "react";
-import { ClipLoader } from "react-spinners";
+import { PuffLoader } from "react-spinners";
 import ProjectModal from "./ProjectModal/ProjectModal";
 import { selectAuthenticate } from "../redux/feature/userSlice";
 import { useAppSelector } from "../redux/hooks";
@@ -142,7 +142,7 @@ function Home() {
             )
           ) : (
             <div className="spinner">
-              <ClipLoader color="purple" />
+              <PuffLoader color="#63b2ff" />
             </div>
           )}
         </div>

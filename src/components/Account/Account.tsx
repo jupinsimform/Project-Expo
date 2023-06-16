@@ -7,7 +7,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { LinearProgress, TextField } from "@mui/material";
 import ProjectForm from "./ProjectForm/ProjectForm";
 import { Navigate, Link } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
+import { PuffLoader } from "react-spinners";
 import { signOut } from "firebase/auth";
 import {
   auth,
@@ -354,7 +354,7 @@ function Account() {
             )
           ) : (
             <div className="spinner">
-              <ClipLoader color="purple" />
+              <PuffLoader color="#63b2ff" />
             </div>
           )}
         </div>
