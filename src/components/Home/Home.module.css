@@ -14,6 +14,18 @@
   right: 0;
   clip-path: polygon(38% 0, 100% 66%, 100% 0);
 }
+.header::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  z-index: -2;
+  background: url(../../assets/background.jpg) no-repeat center;
+  background-size: cover;
+}
+
 .header {
   padding: 30px;
   display: flex;
@@ -49,6 +61,17 @@
   color: #424242;
 }
 
+.left .subHeading .subText {
+  color: #63b2ff;
+}
+
+.left .subDescription {
+  font-weight: 550;
+  font-size: 1.5rem;
+  line-height: 2.9rem;
+  color: #424242;
+}
+
 .left button {
   border: none;
   outline: none;
@@ -59,8 +82,8 @@
   font-size: 1.2rem;
   font-weight: 550;
   border-radius: 25px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
   cursor: pointer;
-  transition: 200ms;
   display: flex;
   gap: 5px;
   align-items: center;
@@ -85,10 +108,16 @@
   height: auto;
 }
 
+.filter {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .searchBar {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  width: 100%;
   padding: 5px 10px;
   background-color: #f2f2f2;
   border-radius: 4px;
@@ -112,6 +141,21 @@
   outline: none;
   border: none;
   background-color: transparent;
+}
+
+.sortBy {
+  color: #333;
+  width: fit-content;
+  font-size: 0.9rem;
+  padding: 6px 22px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;
+  border: 1px solid #dfdfdf;
+  border-radius: 2px;
+  margin-right: 1rem;
 }
 
 .body {
@@ -139,7 +183,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
@@ -147,14 +191,13 @@
 }
 
 .project .image {
-  width: 300px;
+  width: 350px;
   height: 190px;
 }
 
 .project .image img {
   height: 100%;
   width: 100%;
-  /* object-fit: cover; */
 }
 
 .project .title {

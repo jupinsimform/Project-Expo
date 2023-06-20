@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+// import { useNavigate } from "react-router-dom";
 import {
   auth,
   updateUserDatabase,
@@ -75,8 +77,15 @@ export const loginUser = createAsyncThunk(
   async (values: UserValues, { rejectWithValue }) => {
     try {
       await signInWithEmailAndPassword(auth, values.email!, values.password!);
+      toast.success("Logged in successfully", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      // const navigate = useNavigate();
+      // navigate("/");
       return { email: values.email };
     } catch (error: any) {
+      toast.error(error.message);
       return rejectWithValue(error.message);
     }
   }

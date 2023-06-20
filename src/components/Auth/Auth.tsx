@@ -288,6 +288,7 @@ function Auth(props: AuthProps) {
         setSubmitButtonDisable(false);
         toast.success("Your registration was successful!", {
           position: "top-right",
+          autoClose: 2000,
         });
         navigate("/");
       })
@@ -334,19 +335,22 @@ function Auth(props: AuthProps) {
     }
     setSubmitButtonDisable(true);
     dispatch(loginUser(values))
-      .then((data) => {
-        if (data.meta.requestStatus === "rejected") {
-          throw new Error(data.payload as string);
-        }
+      .then(() => {
+        // if (data.meta.requestStatus === "rejected") {
+        //   throw new Error(data.payload as string);
+        // }
         setSubmitButtonDisable(false);
-        toast.success("Logged in successfully", {
-          position: "top-right",
-        });
+        // toast.success("Logged in successfully", {
+        //   position: "top-right",
+        //   autoClose: 2000,
+        // });
+
         navigate("/");
       })
-      .catch((err) => {
+      .catch(() => {
+        // console.log("abhlo");
         setSubmitButtonDisable(false);
-        toast.error(err.message);
+        // toast.error(err.message);
       });
   };
 

@@ -9,7 +9,7 @@ import { getAllProjects } from "../../helpers/db";
 import { ChangeEvent, useEffect, useState } from "react";
 import { PuffLoader } from "react-spinners";
 import ProjectModal from "./ProjectModal/ProjectModal";
-import { selectAuthenticate } from "../redux/feature/userSlice";
+import { selectAuthenticate, selectLoading } from "../redux/feature/userSlice";
 import { useAppSelector } from "../redux/hooks";
 
 interface Project {
@@ -20,16 +20,19 @@ interface Project {
   link?: string;
   points?: string[];
   pid?: string;
+  likes?: string[];
 }
 
 function Home() {
   const navigate = useNavigate();
   const isauthenticated = useAppSelector(selectAuthenticate);
+  const isloading = useAppSelector(selectLoading);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [projects, setProjects] = useState<Project[] | []>([]);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projectDetails, setProjectDetails] = useState<Project | {}>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortCategory, setSortCategory] = useState("");
 
   const handleNextButtonClick = () => {
     if (isauthenticated) {
@@ -41,6 +44,10 @@ function Home() {
 
   const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleSortCategoryChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSortCategory(event.target.value);
   };
 
   const fetchAllProjects = async () => {
@@ -61,7 +68,23 @@ function Home() {
     setProjectDetails(project);
   };
 
-  const filteredProjects = projects.filter(
+  let sortedProjects = [...projects];
+
+  switch (sortCategory) {
+    case "a-z":
+      sortedProjects.sort((a, b) => a.title!.localeCompare(b.title!));
+      break;
+    case "z-a":
+      sortedProjects.sort((a, b) => b.title!.localeCompare(a.title!));
+      break;
+    case "most-votes":
+      sortedProjects.sort(
+        (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
+      );
+      break;
+  }
+
+  const filteredProjects = sortedProjects.filter(
     (project) =>
       project.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.points?.some((point) =>
@@ -72,6 +95,14 @@ function Home() {
   useEffect(() => {
     fetchAllProjects();
   }, []);
+
+  if (isloading) {
+    return (
+      <div className="spinner">
+        <PuffLoader color="#63b2ff" />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -86,7 +117,15 @@ function Home() {
         <div className={styles.left}>
           <p className={styles.heading}>Projects Expo</p>
           <p className={styles.subHeading}>
-            A centralized platform for software development projects.
+            A centralized platform for{" "}
+            <span className={styles.subText}>
+              software development projects
+            </span>
+            .
+          </p>
+          <p className={styles.subDescription}>
+            All-in-one platform for software development projects, providing a
+            streamlined approach to project management and collaboration.
           </p>
           <button onClick={handleNextButtonClick}>
             {isauthenticated ? "Manage your Projects" : "Get Started"}
@@ -102,19 +141,32 @@ function Home() {
 
       <div className={styles.body}>
         <p className={styles.title}>All Projects</p>
-        <div className={styles.searchBar}>
-          <div className={styles.searchIcon}>
-            <Search />
+        <div className={styles.filter}>
+          <div className={styles.searchBar}>
+            <div className={styles.searchIcon}>
+              <Search />
+            </div>
+            <InputBase
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={handleSearchQueryChange}
+              classes={{
+                root: styles.inputRoot,
+                input: styles.inputInput,
+              }}
+            />
           </div>
-          <InputBase
-            placeholder="Search projects..."
-            value={searchQuery}
-            onChange={handleSearchQueryChange}
-            classes={{
-              root: styles.inputRoot,
-              input: styles.inputInput,
-            }}
-          />
+
+          <select
+            value={sortCategory}
+            className={styles.sortBy}
+            onChange={handleSortCategoryChange}
+          >
+            <option value="">Sort by</option>
+            <option value="a-z">A to Z</option>
+            <option value="z-a">Z to A</option>
+            <option value="most-votes">Most Votes</option>
+          </select>
         </div>
         <div className={styles.projects}>
           {projectsLoaded ? (

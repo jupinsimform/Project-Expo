@@ -8,6 +8,7 @@ import { auth } from "./helpers/db";
 import {
   fetchUserDetails,
   selectAuthenticate,
+  selectLoading,
 } from "./components/redux/feature/userSlice";
 import { useAppDispatch, useAppSelector } from "./components/redux/hooks";
 import { ToastContainer } from "react-toastify";
@@ -17,7 +18,7 @@ import { PuffLoader } from "react-spinners";
 function App() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectAuthenticate);
-
+  const isloading = useAppSelector(selectLoading);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function App() {
     <div className="App">
       {isDataLoaded ? (
         <Routes>
-          {!isAuthenticated && (
+          {!isAuthenticated && !isloading && (
             <>
               <Route path="/login" element={<Auth />} />
               <Route path="/signup" element={<Auth signup />} />
@@ -44,7 +45,7 @@ function App() {
           )}
           <Route path="/" element={<Home />} />
           <Route path="/account" element={<Account />} />
-          <Route path="/*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       ) : (
         <div className="spinner">

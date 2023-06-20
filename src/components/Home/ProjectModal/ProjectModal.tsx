@@ -43,32 +43,6 @@ function ProjectModal(props: ProjectModalProps) {
   };
 
   const toggleStar = async () => {
-    // const likesRef = doc(database, "projects", details.pid!);
-
-    // if (starFilled) {
-    //   updateDoc(likesRef, {
-    //     likes: arrayRemove(userDetails.uid),
-    //   })
-    //     .then(() => {
-    //       setStarFilled(false);
-    //       setStarCount(starCount - 1);
-    //     })
-    //     .catch((e) => {
-    //       console.log(e);
-    //     });
-    // } else {
-    //   updateDoc(likesRef, {
-    //     likes: arrayUnion(userDetails.uid),
-    //   })
-    //     .then(() => {
-    //       setStarFilled(true);
-    //       setStarCount(starCount + 1);
-    //     })
-    //     .catch((e) => {
-    //       console.log(e);
-    //     });
-    // }
-
     const isAddingLike = !starFilled;
 
     await updatelikes(details.pid!, isAddingLike, userDetails.uid!);
@@ -103,16 +77,20 @@ function ProjectModal(props: ProjectModalProps) {
               <Link target="_blank" to={`${details.github}`}>
                 <GitHub />
               </Link>
-              <Link target="_blank" to={`${details.link}`}>
-                <Paperclip />
-              </Link>
+              {details.link ? (
+                <Link target="_blank" to={`${details.link}`}>
+                  <Paperclip />
+                </Link>
+              ) : (
+                ""
+              )}
+
               <div className={styles.starDetails}>
                 {isauthenticated ? (
                   <>
                     <p className={styles.star}>{starCount}</p>
                     <Star
                       onClick={toggleStar}
-                      // color={starFilled ? "yellow" : "#63b2ff"}
                       fill={starFilled ? "#FFCC00" : "none"}
                     />
                   </>

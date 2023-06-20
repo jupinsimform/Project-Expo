@@ -15,13 +15,14 @@ import {
   getAllProjectsForUser,
   deleteProject,
 } from "../../helpers/db";
-import { useState, useRef, ChangeEvent, useEffect } from "react";
+import { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   logout,
   updateUserDetails,
   selectAuthenticate,
   selectUserDetails,
+  selectLoading,
 } from "../redux/feature/userSlice";
 
 interface Project {
@@ -37,6 +38,8 @@ interface Project {
 function Account() {
   const userDetails = useAppSelector(selectUserDetails);
   const authenticate = useAppSelector(selectAuthenticate);
+  const loading = useAppSelector(selectLoading);
+
   const imagePicker = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
 
@@ -115,17 +118,17 @@ function Account() {
     );
   };
 
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    property: string
-  ) => {
-    setShowSaveDetailsButton(true);
+  const handleInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>, property: string) => {
+      setShowSaveDetailsButton(true);
 
-    setUserProfileValues((prev) => ({
-      ...prev,
-      [property]: event.target.value,
-    }));
-  };
+      setUserProfileValues((prev) => ({
+        ...prev,
+        [property]: event.target.value,
+      }));
+    },
+    []
+  );
 
   const saveDetailsToDatabase = () => {
     if (!userProfileValues.name) {
@@ -180,8 +183,8 @@ function Account() {
 
   const handleDeletion = (pid: string) => {
     confirmAlert({
-      title: "Confirm to submit",
-      message: "Are you sure to delete this.",
+      title: "Confirm to Delete",
+      message: "Are you sure to delete this project?",
       buttons: [
         {
           label: "Yes",
@@ -199,10 +202,31 @@ function Account() {
   };
 
   useEffect(() => {
-    fetchAllProjects();
-  }, []);
+    if (userDetails.uid) {
+      setUserProfileValues((prev) => ({
+        ...prev,
+        name: userDetails.name || "",
+        designation: userDetails.designation || "",
+        github: userDetails.github || "",
+        linkedin: userDetails.linkedin || "",
+      }));
+      setProfileImageUrl(
+        userDetails.profileImage! ||
+          "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
+      );
+      fetchAllProjects();
+    }
+  }, [userDetails.uid]);
 
-  return authenticate ? (
+  if (loading) {
+    return (
+      <div className="spinner">
+        <PuffLoader color="#63b2ff" />
+      </div>
+    );
+  }
+
+  return authenticate && userDetails.uid ? (
     <div className={styles.container}>
       {showProjectForm && (
         <ProjectForm

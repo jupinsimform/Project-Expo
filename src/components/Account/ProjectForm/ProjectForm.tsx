@@ -5,7 +5,7 @@ import { addOrUpdateProject } from "../../redux/feature/projectSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import { toast } from "react-toastify";
 import ImagePlaceholder from "../../../assets/image-placeholder.png";
-import { useRef, useState, ChangeEvent } from "react";
+import { useRef, useState, ChangeEvent, memo } from "react";
 import { X } from "react-feather";
 import { LinearProgress, TextField } from "@mui/material";
 import { useAppSelector } from "../../redux/hooks";
@@ -180,12 +180,9 @@ function ProjectForm(props: ProjectFormProps) {
             autoClose: 2000,
           });
         } else {
-          toast.success(
-            "Success! Your project has been added. Keep up the great work👍",
-            {
-              autoClose: 2000,
-            }
-          );
+          toast.success("Success! Your project has been added👍", {
+            autoClose: 2000,
+          });
         }
       }
 
@@ -342,7 +339,7 @@ function ProjectForm(props: ProjectFormProps) {
   );
 }
 
-export default ProjectForm;
+export default memo(ProjectForm);
 
 // import Modal from "../../Modal/Modal";
 // import styles from "./ProjectForm.module.css";

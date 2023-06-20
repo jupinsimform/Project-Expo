@@ -104,10 +104,11 @@
   padding: 8px 16px;
   background-color: #bfecfa;
   color: gray;
-  border-radius: 5px;
+  border-radius: 25px;
   width: fit-content;
   text-align: center;
   font-size: 1rem;
+  font-weight: 550;
   cursor: pointer;
   transition: 200ms;
   margin: auto 0px;
@@ -132,12 +133,13 @@
   border: none;
   outline: none;
   padding: 8px 16px;
-  background-color: #3b99f7;
+  background-color: #50b4f7;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 25px;
   width: fit-content;
   text-align: center;
   font-size: 1rem;
+  font-weight: 550;
   cursor: pointer;
   transition: 200ms;
   display: flex;
@@ -147,7 +149,7 @@
 }
 
 .savebutton:hover {
-  background-color: #2990f7;
+  background-color: #21a0f5;
 }
 
 .savebutton:active {
