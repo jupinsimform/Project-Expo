@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
 import {
   auth,
   updateUserDatabase,
@@ -11,23 +10,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { RootState } from "../store";
-const initialValues: UserValues = {
-  name: "",
-  email: "",
-  password: "",
-  profileImage: "",
-  designation: "",
-  github: "",
-  linkedin: "",
-  uid: "",
-};
-
-const initialState = {
-  userDetails: initialValues,
-  authenticate: false,
-  loading: false,
-  error: null,
-};
+import { DocumentData } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 
 interface UserValues {
   name?: string;
@@ -49,6 +33,25 @@ interface userValues {
   linkedin?: string;
 }
 
+const initialValues: UserValues = {
+  name: "",
+  email: "",
+  password: "",
+  profileImage: "",
+  designation: "",
+  github: "",
+  linkedin: "",
+  uid: "",
+};
+
+const initialState = {
+  userDetails: initialValues,
+  authenticate: false,
+  loading: false,
+  error: null,
+};
+
+// Thunk action to Signup user
 export const signUpUser = createAsyncThunk(
   "user/signUpUser",
   async (values: UserValues, { rejectWithValue }) => {
@@ -64,29 +67,55 @@ export const signUpUser = createAsyncThunk(
         { name: values.name, email: values.email },
         userId
       );
+      toast.success("Your registration was successful!", {
+        position: "top-right",
+        autoClose: 2000,
+      });
 
       return { name: values.name, email: values.email, uid: userId };
     } catch (error: any) {
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/email-already-in-use") {
+          toast.error("This email is already registered");
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error(error.message);
+      }
       return rejectWithValue(error.message);
     }
   }
 );
 
+// Thunk action to login user
 export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (values: UserValues, { rejectWithValue }) => {
     try {
       await signInWithEmailAndPassword(auth, values.email!, values.password!);
+
       toast.success("Logged in successfully", {
         position: "top-right",
         autoClose: 2000,
       });
-      // const navigate = useNavigate();
-      // navigate("/");
+
       return { email: values.email };
     } catch (error: any) {
-      toast.error(error.message);
-      return rejectWithValue(error.message);
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/user-not-found") {
+          toast.error("User not Found");
+        } else if (error.code === "auth/wrong-password") {
+          toast.error("Wrong Password");
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error(error.message);
+      }
+
+      console.log(rejectWithValue(error.message));
+      return rejectWithValue({ message: error.message });
     }
   }
 );
@@ -94,12 +123,12 @@ export const loginUser = createAsyncThunk(
 // Thunk action to fetch user details from the database
 export const fetchUserDetails = createAsyncThunk(
   "user/fetchUserDetails",
-  async (uid: string, thunkAPI) => {
+  async (uid: string, { rejectWithValue }) => {
     try {
       const userDetails = await getUserFromDatabase(uid);
       return userDetails;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -107,12 +136,15 @@ export const fetchUserDetails = createAsyncThunk(
 // Thunk action to update user details in the database
 export const updateUserDetails = createAsyncThunk(
   "user/updateUserDetails",
-  async ({ user, uid }: { user: userValues; uid: string }, thunkAPI) => {
+  async (
+    { user, uid }: { user: userValues; uid: string },
+    { rejectWithValue }
+  ) => {
     try {
       await updateUserDatabase(user, uid);
       return user;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -122,6 +154,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      localStorage.removeItem("userToken");
       state.userDetails = initialValues;
       state.authenticate = false;
     },
@@ -132,30 +165,35 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signUpUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
-      .addCase(signUpUser.fulfilled, (state, action) => {
-        state.userDetails = action.payload;
-        state.authenticate = true;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        signUpUser.fulfilled,
+        (state, action: PayloadAction<UserValues>) => {
+          state.userDetails = action.payload;
+          state.authenticate = true;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(signUpUser.rejected, (state, action: any) => {
         state.loading = false;
         state.error = action.payload;
       })
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.userDetails = action.payload;
-        state.authenticate = true;
-        state.loading = false;
-        state.error = null;
-      })
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<{ email?: string }>) => {
+          state.userDetails = action.payload;
+          state.authenticate = true;
+          state.loading = false;
+          state.error = null;
+        }
+      )
       .addCase(loginUser.rejected, (state, action: any) => {
+        console.log(action);
         state.loading = false;
         state.error = action.payload;
       })
@@ -163,11 +201,14 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.userDetails = action.payload!;
-        state.authenticate = true;
-      })
+      .addCase(
+        fetchUserDetails.fulfilled,
+        (state, action: PayloadAction<DocumentData | null>) => {
+          state.loading = false;
+          state.userDetails = action.payload!;
+          state.authenticate = true;
+        }
+      )
       .addCase(fetchUserDetails.rejected, (state, action: any) => {
         state.loading = false;
         state.error = action.payload;
@@ -178,11 +219,14 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateUserDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.userDetails = action.payload;
-        state.error = null;
-      })
+      .addCase(
+        updateUserDetails.fulfilled,
+        (state, action: PayloadAction<userValues>) => {
+          state.loading = false;
+          state.userDetails = action.payload;
+          state.error = null;
+        }
+      )
       .addCase(updateUserDetails.rejected, (state, action: any) => {
         state.loading = false;
         state.error = action.payload;

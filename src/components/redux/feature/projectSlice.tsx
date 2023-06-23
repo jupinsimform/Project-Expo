@@ -4,6 +4,7 @@ import {
   updateProjectInDatabase,
 } from "../../../helpers/db";
 import { RootState } from "../store";
+import { toast } from "react-toastify";
 
 interface Project {
   thumbnail?: string;
@@ -35,11 +36,18 @@ export const addOrUpdateProject = createAsyncThunk(
     try {
       if (project.pid) {
         await updateProjectInDatabase(project, project.pid);
+        toast.success("Success! Your project has been updated.", {
+          autoClose: 2000,
+        });
       } else {
         await addProjectInDatabase(project);
+        toast.success("Success! Your project has been added👍", {
+          autoClose: 2000,
+        });
       }
       return project;
     } catch (error: any) {
+      toast.error(error.message);
       return thunkAPI.rejectWithValue(error.message);
     }
   }

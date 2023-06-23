@@ -1,21 +1,18 @@
-import styles from "./Account.module.css";
+import { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
 import { Camera, LogOut, Edit2, Trash, Paperclip, GitHub } from "react-feather";
-import Nodata from "../../assets/nodata.svg";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import { LinearProgress, TextField } from "@mui/material";
-import ProjectForm from "./ProjectForm/ProjectForm";
 import { Navigate, Link } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { signOut } from "firebase/auth";
+import { LinearProgress, TextField } from "@mui/material";
+import ProjectForm from "./ProjectForm/ProjectForm";
 import {
   auth,
   uploadImage,
   getAllProjectsForUser,
   deleteProject,
 } from "../../helpers/db";
-import { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   logout,
@@ -24,6 +21,9 @@ import {
   selectUserDetails,
   selectLoading,
 } from "../redux/feature/userSlice";
+import Nodata from "../../assets/nodata.svg";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import styles from "./Account.module.css";
 
 interface Project {
   thumbnail?: string;
@@ -35,7 +35,11 @@ interface Project {
   pid?: string;
 }
 
-function Account() {
+type AccountProps = {
+  timeoutId: NodeJS.Timeout | null;
+};
+
+function Account({ timeoutId }: AccountProps) {
   const userDetails = useAppSelector(selectUserDetails);
   const authenticate = useAppSelector(selectAuthenticate);
   const loading = useAppSelector(selectLoading);
@@ -68,6 +72,9 @@ function Account() {
   const [editProject, setEditProject] = useState<Project | {}>({});
 
   const handleLogout = async () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
     await signOut(auth);
     dispatch(logout());
   };

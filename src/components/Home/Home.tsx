@@ -1,16 +1,16 @@
-import styles from "./Home.module.css";
+import { ChangeEvent, useEffect, useState } from "react";
 import { ArrowRight } from "react-feather";
 import { useNavigate } from "react-router-dom";
-import HomeImage from "../../assets/home-image.gif";
+import { PuffLoader } from "react-spinners";
 import { Search } from "react-feather";
 import { InputBase } from "@mui/material";
-import Nodata from "../../assets/nodata.svg";
 import { getAllProjects } from "../../helpers/db";
-import { ChangeEvent, useEffect, useState } from "react";
-import { PuffLoader } from "react-spinners";
 import ProjectModal from "./ProjectModal/ProjectModal";
 import { selectAuthenticate, selectLoading } from "../redux/feature/userSlice";
 import { useAppSelector } from "../redux/hooks";
+import Nodata from "../../assets/nodata.svg";
+import HomeImage from "../../assets/home-image.gif";
+import styles from "./Home.module.css";
 
 interface Project {
   thumbnail?: string;
@@ -96,15 +96,11 @@ function Home() {
     fetchAllProjects();
   }, []);
 
-  if (isloading) {
-    return (
-      <div className="spinner">
-        <PuffLoader color="#63b2ff" />
-      </div>
-    );
-  }
-
-  return (
+  return isloading ? (
+    <div className="spinner">
+      <PuffLoader color="#63b2ff" />
+    </div>
+  ) : (
     <div className={styles.container}>
       {showProjectModal && (
         <ProjectModal
@@ -163,8 +159,8 @@ function Home() {
             onChange={handleSortCategoryChange}
           >
             <option value="">Sort by</option>
-            <option value="a-z">A to Z</option>
-            <option value="z-a">Z to A</option>
+            <option value="a-z"> &darr; A to Z</option>
+            <option value="z-a"> &uarr; Z to A</option>
             <option value="most-votes">Most Votes</option>
           </select>
         </div>

@@ -1,16 +1,15 @@
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
 import { GitHub, Paperclip, Star } from "react-feather";
-import { updatelikes } from "../../../helpers/db";
-
 import { toast } from "react-toastify";
+import { updatelikes } from "../../../helpers/db";
 import Modal from "../../Modal/Modal";
-import styles from "./ProjectModal.module.css";
 import { useAppSelector } from "../../redux/hooks";
 import {
   selectAuthenticate,
   selectUserDetails,
 } from "../../redux/feature/userSlice";
-import { useState } from "react";
+import styles from "./ProjectModal.module.css";
 
 interface Project {
   thumbnail?: string;
@@ -118,4 +117,4 @@ function ProjectModal(props: ProjectModalProps) {
   );
 }
 
-export default ProjectModal;
+export default memo(ProjectModal);

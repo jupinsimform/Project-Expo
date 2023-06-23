@@ -33,9 +33,9 @@
 
 .left .image img {
   height: 170px;
-  width: 250px;
+  width: 285px;
   cursor: pointer;
-  /* object-fit: cover; */
+  object-fit: cover;
 }
 
 .left .image p {
