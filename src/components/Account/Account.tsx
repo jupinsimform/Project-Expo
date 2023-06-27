@@ -22,6 +22,7 @@ import {
   selectLoading,
 } from "../redux/feature/userSlice";
 import Nodata from "../../assets/nodata.svg";
+import ImagePlaceholder from "../../assets/image-placeholder.jpg";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import styles from "./Account.module.css";
 import { Project, AccountProps } from "../../Types/types";
@@ -36,8 +37,7 @@ function Account({ timeoutId }: AccountProps) {
 
   const [progress, setProgress] = useState(0);
   const [profileImageUrl, setProfileImageUrl] = useState(
-    userDetails.profileImage ||
-      "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
+    userDetails.profileImage || ImagePlaceholder
   );
   const [profileImageUploadStarted, setProfileImageUploadStarted] =
     useState(false);
@@ -134,9 +134,7 @@ function Account({ timeoutId }: AccountProps) {
     const updatedUserProfile = {
       ...userProfileValues,
       email: userDetails.email,
-      profileImage:
-        userDetails.profileImage ||
-        "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg",
+      profileImage: userDetails.profileImage || ImagePlaceholder,
       uid: userDetails.uid,
     };
 
@@ -204,10 +202,7 @@ function Account({ timeoutId }: AccountProps) {
         github: userDetails.github || "",
         linkedin: userDetails.linkedin || "",
       }));
-      setProfileImageUrl(
-        userDetails.profileImage! ||
-          "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
-      );
+      setProfileImageUrl(userDetails.profileImage! || ImagePlaceholder);
       fetchAllProjects();
     }
   }, [userDetails.uid]);
