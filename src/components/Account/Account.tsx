@@ -1,8 +1,16 @@
 import { useState, useRef, ChangeEvent, useEffect, useCallback } from "react";
-import { Camera, LogOut, Edit2, Trash, Paperclip, GitHub } from "react-feather";
+import {
+  Camera,
+  LogOut,
+  Edit2,
+  Trash,
+  Paperclip,
+  GitHub,
+  ArrowLeftCircle,
+} from "react-feather";
 import { toast } from "react-toastify";
 import { confirmAlert } from "react-confirm-alert";
-import { Navigate, Link } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { signOut } from "firebase/auth";
 import { LinearProgress, TextField } from "@mui/material";
@@ -31,6 +39,7 @@ function Account({ timeoutId }: AccountProps) {
   const userDetails = useAppSelector(selectUserDetails);
   const authenticate = useAppSelector(selectAuthenticate);
   const loading = useAppSelector(selectLoading);
+  const navigate = useNavigate();
 
   const imagePicker = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -64,6 +73,10 @@ function Account({ timeoutId }: AccountProps) {
     }
     await signOut(auth);
     dispatch(logout());
+  };
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
   const handleCameraClick = () => {
@@ -150,7 +163,7 @@ function Account({ timeoutId }: AccountProps) {
   };
 
   const handleAddProject = () => {
-    setEditProject({}); // Reset the editProject state variable
+    setEditProject({});
     setShowProjectForm(true);
   };
 
@@ -229,9 +242,13 @@ function Account({ timeoutId }: AccountProps) {
         <p className={styles.heading}>
           <span>Welcome {userProfileValues.name}</span>
         </p>
-
-        <div className={styles.logout} onClick={handleLogout}>
-          <LogOut /> Logout
+        <div className={styles.rightHeader}>
+          <div className={styles.back} onClick={handleBack}>
+            <ArrowLeftCircle /> Back
+          </div>
+          <div className={styles.logout} onClick={handleLogout}>
+            <LogOut /> Logout
+          </div>
         </div>
       </div>
       <input

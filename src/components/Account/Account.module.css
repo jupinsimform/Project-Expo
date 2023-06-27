@@ -37,28 +37,33 @@
   text-transform: capitalize;
 }
 
-.header .logout {
+.header .rightHeader {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
 
-.header .logout svg {
+.rightHeader .logout,
+.rightHeader .back {
+  display: flex;
+  gap: 5px;
+}
+
+.rightHeader .logout svg,
+.rightHeader .back svg {
   height: 18px;
   width: 18px;
   transition: 200ms;
 }
 
-.header .logout {
-  color: #fff;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: 200ms;
-}
-
-.header .logout:hover,
-.header .logout:hover svg {
+.rightHeader .logout:hover,
+.rightHeader .logout:hover svg,
+.rightHeader .back:hover,
+.rightHeader .back:hover svg {
   color: #ff3511;
 }
 
@@ -178,7 +183,7 @@
   flex-direction: column;
   gap: 15px;
   align-items: center;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
   transition: all 0.2s ease-in-out;
 }
 
@@ -197,7 +202,7 @@
   align-items: center;
   background-color: #a9d3fc;
   border-radius: 5px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   padding: 15px;
 }
 
