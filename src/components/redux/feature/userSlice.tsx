@@ -12,26 +12,7 @@ import {
 import { RootState } from "../store";
 import { DocumentData } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
-
-interface UserValues {
-  name?: string;
-  email?: string;
-  password?: string;
-  profileImage?: string;
-  designation?: string;
-  github?: string;
-  linkedin?: string;
-  uid?: string;
-}
-
-interface userValues {
-  name?: string;
-  email?: string;
-  profileImage?: string;
-  designation?: string;
-  github?: string;
-  linkedin?: string;
-}
+import { UserValues } from "../../../Types/types";
 
 const initialValues: UserValues = {
   name: "",
@@ -114,7 +95,6 @@ export const loginUser = createAsyncThunk(
         toast.error(error.message);
       }
 
-      console.log(rejectWithValue(error.message));
       return rejectWithValue({ message: error.message });
     }
   }
@@ -137,7 +117,7 @@ export const fetchUserDetails = createAsyncThunk(
 export const updateUserDetails = createAsyncThunk(
   "user/updateUserDetails",
   async (
-    { user, uid }: { user: userValues; uid: string },
+    { user, uid }: { user: UserValues; uid: string },
     { rejectWithValue }
   ) => {
     try {
@@ -193,7 +173,6 @@ const userSlice = createSlice({
         }
       )
       .addCase(loginUser.rejected, (state, action: any) => {
-        console.log(action);
         state.loading = false;
         state.error = action.payload;
       })
@@ -216,12 +195,11 @@ const userSlice = createSlice({
         state.authenticate = false;
       })
       .addCase(updateUserDetails.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(
         updateUserDetails.fulfilled,
-        (state, action: PayloadAction<userValues>) => {
+        (state, action: PayloadAction<UserValues>) => {
           state.loading = false;
           state.userDetails = action.payload;
           state.error = null;

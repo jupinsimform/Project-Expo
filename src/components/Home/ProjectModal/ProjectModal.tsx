@@ -10,23 +10,7 @@ import {
   selectUserDetails,
 } from "../../redux/feature/userSlice";
 import styles from "./ProjectModal.module.css";
-
-interface Project {
-  thumbnail?: string;
-  title?: string;
-  overview?: string;
-  github?: string;
-  link?: string;
-  points?: string[];
-  pid?: string;
-  likes?: string[];
-}
-
-interface ProjectModalProps {
-  details: Project;
-  onClose?: () => void;
-  fetchAllProjects: () => Promise<void>;
-}
+import { ProjectModalProps } from "../../../Types/types";
 
 function ProjectModal(props: ProjectModalProps) {
   const { details } = props;

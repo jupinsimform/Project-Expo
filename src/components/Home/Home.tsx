@@ -11,17 +11,7 @@ import { useAppSelector } from "../redux/hooks";
 import Nodata from "../../assets/nodata.svg";
 import HomeImage from "../../assets/home-image.gif";
 import styles from "./Home.module.css";
-
-interface Project {
-  thumbnail?: string;
-  title?: string;
-  overview?: string;
-  github?: string;
-  link?: string;
-  points?: string[];
-  pid?: string;
-  likes?: string[];
-}
+import { Project } from "../../Types/types";
 
 function Home() {
   const navigate = useNavigate();

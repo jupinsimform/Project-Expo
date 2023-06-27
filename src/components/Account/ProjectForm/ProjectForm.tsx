@@ -8,22 +8,8 @@ import { useAppDispatch } from "../../redux/hooks";
 import { useAppSelector } from "../../redux/hooks";
 import { selectUserDetails } from "../../redux/feature/userSlice";
 import styles from "./ProjectForm.module.css";
-
-interface ProjectFormProps {
-  isEdit: boolean;
-  default: {
-    thumbnail?: string;
-    title?: string;
-    overview?: string;
-    github?: string;
-    link?: string;
-    points?: string[];
-    pid?: string;
-    likes?: string[];
-  };
-  onSubmission?: () => void;
-  onClose?: () => void;
-}
+import { toast } from "react-toastify";
+import { ProjectFormProps } from "../../../Types/types";
 
 function ProjectForm(props: ProjectFormProps) {
   const { uid } = useAppSelector(selectUserDetails);
@@ -107,10 +93,7 @@ function ProjectForm(props: ProjectFormProps) {
   }
 
   const validateForm = (): boolean => {
-    console.log(values.points);
     const actualPoints = values.points.filter((item) => item.trim());
-
-    console.log(actualPoints);
 
     let isValid = true;
     let errorMessage = "";
@@ -192,8 +175,8 @@ function ProjectForm(props: ProjectFormProps) {
         points: ["", ""],
         likes: [],
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 

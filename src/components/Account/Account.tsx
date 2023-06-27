@@ -24,20 +24,7 @@ import {
 import Nodata from "../../assets/nodata.svg";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import styles from "./Account.module.css";
-
-interface Project {
-  thumbnail?: string;
-  title?: string;
-  overview?: string;
-  github?: string;
-  link?: string;
-  points?: string[];
-  pid?: string;
-}
-
-type AccountProps = {
-  timeoutId: NodeJS.Timeout | null;
-};
+import { Project, AccountProps } from "../../Types/types";
 
 function Account({ timeoutId }: AccountProps) {
   const userDetails = useAppSelector(selectUserDetails);
@@ -366,7 +353,10 @@ function Account({ timeoutId }: AccountProps) {
 
                   <div className={styles.links}>
                     <Edit2 onClick={() => handleEditClick(item)} />
-                    <Trash onClick={() => handleDeletion(item.pid!)} />
+                    <Trash
+                      className={styles.trash}
+                      onClick={() => handleDeletion(item.pid!)}
+                    />
                     <Link target="_blank" to={`${item.github}`}>
                       <GitHub />
                     </Link>

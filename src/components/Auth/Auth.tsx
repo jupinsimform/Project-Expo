@@ -10,15 +10,7 @@ import { auth } from "../../helpers/db";
 import SignUp from "../../assets/signup-image.jpg";
 import SignIn from "../../assets/signin-image.jpg";
 import styles from "./Auth.module.css";
-
-interface AuthProps {
-  signup?: boolean;
-}
-
-interface EndAdornmentProps {
-  visible: boolean;
-  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { AuthProps, EndAdornmentProps } from "../../Types/types";
 
 function Auth(props: AuthProps) {
   const isSignup = !!props.signup;

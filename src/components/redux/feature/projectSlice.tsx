@@ -5,24 +5,7 @@ import {
 } from "../../../helpers/db";
 import { RootState } from "../store";
 import { toast } from "react-toastify";
-
-interface Project {
-  thumbnail?: string;
-  title?: string;
-  overview?: string;
-  github?: string;
-  link?: string;
-  points?: string[];
-  pid?: string;
-  likes?: string[];
-  refUser?: string;
-}
-
-interface ProjectState {
-  project: Project;
-  loading: boolean;
-  error: string | null;
-}
+import { Project, ProjectState } from "../../../Types/types";
 
 const initialState: ProjectState = {
   project: {},

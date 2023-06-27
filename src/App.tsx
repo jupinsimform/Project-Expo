@@ -41,14 +41,14 @@ function App() {
 
         const userToken = await user.getIdToken();
 
-        const expirationTime = new Date().getTime() + 20 * 1000;
+        const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
         storeTokenInLocalStorage(userToken, expirationTime);
 
         setIsDataLoaded(true);
 
         const tokenExpirationTimeout = setTimeout(() => {
           auth.signOut();
-          console.log("heyy");
+
           dispatch(logout());
         }, expirationTime - new Date().getTime());
 
