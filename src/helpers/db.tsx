@@ -23,6 +23,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { UserValues, Project } from "../Types/types";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_APIKEY,
@@ -38,7 +39,7 @@ const database = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
-const updateUserDatabase = async (user: object, uid: string) => {
+const updateUserDatabase = async (user: UserValues, uid: string) => {
   if (typeof user !== "object") return;
 
   const docRef: DocumentReference = doc(database, "users", uid);
@@ -99,14 +100,14 @@ const uploadImage = (
   );
 };
 
-const addProjectInDatabase = async (project: object) => {
+const addProjectInDatabase = async (project: Project) => {
   if (typeof project !== "object") return;
 
   const collectionRef: CollectionReference = collection(database, "projects");
   await addDoc(collectionRef, { ...project });
 };
 
-const updateProjectInDatabase = async (project: object, pid: string) => {
+const updateProjectInDatabase = async (project: Project, pid: string) => {
   if (typeof project !== "object") return;
 
   const docRef = doc(database, "projects", pid);

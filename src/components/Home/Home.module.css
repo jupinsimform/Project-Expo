@@ -240,6 +240,12 @@
     clip-path: polygon(14% 0, 100% 45%, 100% 0);
   }
 }
+@media (max-width: 420px) {
+  .project .image {
+    width: auto;
+    height: auto;
+  }
+}
 
 @media (max-width: 360px) {
   .left {

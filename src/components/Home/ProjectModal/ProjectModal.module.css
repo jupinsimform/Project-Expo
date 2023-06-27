@@ -120,7 +120,8 @@
     flex-direction: column;
   }
   .left .image {
-    width: 250px;
+    width: 275px;
+    height: 180px;
   }
   .left .starDetails .star {
     font-size: 2rem;
