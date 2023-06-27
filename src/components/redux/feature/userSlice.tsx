@@ -94,8 +94,7 @@ export const loginUser = createAsyncThunk(
       } else {
         toast.error(error.message);
       }
-
-      return rejectWithValue({ message: error.message });
+      return rejectWithValue(error.message);
     }
   }
 );

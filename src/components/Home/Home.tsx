@@ -142,17 +142,18 @@ function Home() {
               }}
             />
           </div>
-
-          <select
-            value={sortCategory}
-            className={styles.sortBy}
-            onChange={handleSortCategoryChange}
-          >
-            <option value="">Sort by</option>
-            <option value="a-z"> &darr; A to Z</option>
-            <option value="z-a"> &uarr; Z to A</option>
-            <option value="most-votes">Most Votes</option>
-          </select>
+          <div className={styles.select}>
+            <select
+              value={sortCategory}
+              className={styles.sortBy}
+              onChange={handleSortCategoryChange}
+            >
+              <option value="">Sort by..</option>
+              <option value="a-z"> &darr; A to Z</option>
+              <option value="z-a"> &uarr; Z to A</option>
+              <option value="most-votes">Most Votes</option>
+            </select>
+          </div>
         </div>
         <div className={styles.projects}>
           {projectsLoaded ? (

@@ -143,24 +143,50 @@
   background-color: transparent;
 }
 
+.select {
+  position: relative;
+  display: flex;
+  width: 12rem;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.select::after {
+  content: "\25BC";
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.8rem;
+  transition: 0.25s all ease;
+  pointer-events: none;
+}
+
+.select:hover::after {
+  color: #63b2ff;
+}
+
 .sortBy {
-  color: #333;
-  width: fit-content;
-  font-size: 0.9rem;
-  padding: 6px 22px;
   appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-  background-repeat: no-repeat;
-  background-position-x: 100%;
-  background-position-y: 5px;
-  border: 1px solid #dfdfdf;
-  border-radius: 2px;
-  margin-right: 1rem;
+  outline: 0;
+  border: 0;
+  box-shadow: none;
+  flex: 1;
+  padding: 0 1em;
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: 550;
+
+  background-image: none;
+  cursor: pointer;
+}
+
+.sortBy::-ms-expand {
+  display: none;
 }
 
 .arrowIcon {
-  color: #000; /* Set the color for the arrow icons */
-  margin-right: 5px; /* Add some spacing between the icon and text */
+  color: #000;
+  margin-right: 5px;
 }
 
 .body {
@@ -241,6 +267,9 @@
   }
 }
 @media (max-width: 420px) {
+  .select::after {
+    padding: 1rem;
+  }
   .project .image {
     width: auto;
     height: auto;
