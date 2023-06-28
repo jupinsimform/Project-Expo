@@ -80,98 +80,6 @@
   color: #424242;
 }
 
-.profile {
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-
-.profile .left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile .left .progress {
-  font-weight: bold;
-  font-size: 0.9rem;
-  text-align: center;
-  width: 90%;
-}
-
-.profile .left .image {
-  position: relative;
-  height: 200px;
-  width: 200px;
-  border-radius: 50%;
-  border: 1px solid #88aff7;
-}
-
-.profile .left .image img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
-.profile .left .image .camera {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  background-color: #fff;
-  border-radius: 50%;
-  padding: 8px;
-  z-index: 10;
-  height: fit-content;
-  width: fit-content;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #88aff7;
-  cursor: pointer;
-}
-
-.profile .left .image .camera svg {
-  height: 22px;
-  width: 22px;
-  color: #81c4f1;
-}
-
-.profile .right {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.profile .right .row {
-  width: 70%;
-  min-width: 350px;
-  display: flex;
-  gap: 30px;
-  align-items: center;
-}
-
-.profile .right .row > div {
-  flex: 1;
-}
-
-.footer {
-  display: flex;
-  gap: 30px;
-}
-
-.footer .error {
-  flex: 1;
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: #ff3511;
-  width: 100%;
-  text-align: center;
-}
-
 .projectsHeader {
   display: flex;
   justify-content: space-between;
@@ -183,12 +91,6 @@
   flex-direction: column;
   gap: 15px;
   align-items: center;
-
-  transition: all 0.2s ease-in-out;
-}
-
-.projects:hover {
-  transform: scale(1.01);
 }
 
 .nodata {
@@ -204,6 +106,11 @@
   border-radius: 5px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   padding: 15px;
+  transition: all 0.2s ease-in-out;
+}
+
+.projects .project:hover {
+  transform: scale(1.01);
 }
 
 .project .title {
@@ -293,20 +200,10 @@
   .header .heading span {
     font-size: 2rem;
   }
-  .profile {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .profile .right {
-    align-items: center;
-  }
 }
 
 @media (max-width: 376px) {
   .header .heading span {
     font-size: 1.5rem;
-  }
-  .profile .right .row {
-    flex-direction: column;
   }
 }

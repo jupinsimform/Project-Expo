@@ -1,4 +1,4 @@
-import { useState, FormEvent, useRef } from "react";
+import { useState, FormEvent, useRef, memo, useCallback } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Eye, EyeOff, Mail, User, Key } from "react-feather";
 import { toast } from "react-toastify";
@@ -12,29 +12,32 @@ import SignIn from "../../assets/signin-image.jpg";
 import styles from "./Auth.module.css";
 import { AuthProps, EndAdornmentProps } from "../../Types/types";
 
-function Auth(props: AuthProps) {
-  const isSignup = !!props.signup;
+// EndAdornment component
+const EndAdornment = ({ visible, setVisible }: EndAdornmentProps) => {
+  return (
+    <InputAdornment position="end">
+      <IconButton onClick={() => setVisible(!visible)}>
+        {visible ? (
+          <Eye className={styles.eyeIcon} />
+        ) : (
+          <EyeOff className={styles.eyeOffIcon} />
+        )}
+      </IconButton>
+    </InputAdornment>
+  );
+};
+
+function Auth({ signup }: AuthProps) {
+  // const signup = !!props.signup;
   const dispatch = useAppDispatch();
   const formRef = useRef<HTMLFormElement>(null);
   const [submitButtonDisabled, setSubmitButtonDisable] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  const EndAdornment = ({ visible, setVisible }: EndAdornmentProps) => {
-    return (
-      <InputAdornment position="end">
-        <IconButton onClick={() => setVisible(!visible)}>
-          {visible ? (
-            <Eye className={styles.eyeIcon} />
-          ) : (
-            <EyeOff className={styles.eyeOffIcon} />
-          )}
-        </IconButton>
-      </InputAdornment>
-    );
-  };
-
-  const handleSignup = () => {
+  // Handle signup logic
+  const handleSignup = useCallback(() => {
+    // Get form field values
     if (!formRef.current) {
       return;
     }
@@ -48,6 +51,7 @@ function Auth(props: AuthProps) {
       password: password,
     };
 
+    // Validate form fields
     if (!name || !email || !password || !confirmPassword) {
       toast.error("All fields are required!");
       return;
@@ -56,6 +60,7 @@ function Auth(props: AuthProps) {
       return;
     }
 
+    // Dispatch signup action
     setSubmitButtonDisable(true);
     dispatch(signUpUser(values))
       .then(() => {
@@ -64,15 +69,17 @@ function Auth(props: AuthProps) {
       .catch(() => {
         setSubmitButtonDisable(false);
       });
-  };
+  }, [dispatch]);
 
-  const handleFormReset = () => {
+  // Handle form reset
+  const handleFormReset = useCallback(() => {
     if (formRef.current) {
       formRef.current.reset();
     }
     dispatch(resetUser());
-  };
+  }, [dispatch]);
 
+  // Handle forgot password
   const handleForgotPassword = () => {
     if (!formRef.current) {
       return;
@@ -87,7 +94,8 @@ function Auth(props: AuthProps) {
     }
   };
 
-  const handleLogin = () => {
+  // Handle login logic
+  const handleLogin = useCallback(() => {
     if (!formRef.current) {
       return;
     }
@@ -109,12 +117,13 @@ function Auth(props: AuthProps) {
       .catch(() => {
         setSubmitButtonDisable(false);
       });
-  };
+  }, [dispatch]);
 
+  // Handle form submission
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isSignup) {
+    if (signup) {
       handleSignup();
     } else {
       handleLogin();
@@ -124,9 +133,9 @@ function Auth(props: AuthProps) {
   return (
     <div className={styles.main}>
       <div className={styles.container}>
-        {!isSignup && (
+        {!signup && (
           <div className={styles.commanImage}>
-            <img src={SignIn} alt="" className={styles.formImage} />
+            <img src={SignIn} alt="signin-image" className={styles.formImage} />
           </div>
         )}
         <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
@@ -134,7 +143,7 @@ function Auth(props: AuthProps) {
             <Link to="/">{"< Back to Home"}</Link>
           </p>
           <div className={styles.heading}>
-            {isSignup ? (
+            {signup ? (
               <>
                 <div> Create an account</div>
                 <p className={styles.subHeading}>
@@ -149,7 +158,7 @@ function Auth(props: AuthProps) {
             )}
           </div>
 
-          {isSignup && (
+          {signup && (
             <TextField
               hiddenLabel
               id="outlined-basic-name"
@@ -202,7 +211,7 @@ function Auth(props: AuthProps) {
             }}
             name="password"
           />
-          {isSignup && (
+          {signup && (
             <TextField
               hiddenLabel
               id="outlined-basic-confirmPassword"
@@ -231,16 +240,16 @@ function Auth(props: AuthProps) {
             disabled={submitButtonDisabled}
             className={styles.submitbutton}
           >
-            {isSignup ? "Register" : "LogIn"}
+            {signup ? "Register" : "LogIn"}
           </button>
-          {!isSignup && (
+          {!signup && (
             <p onClick={handleForgotPassword} className={styles.resetPassword}>
               Forgot Password?
             </p>
           )}
 
           <div className={styles.bottom}>
-            {isSignup ? (
+            {signup ? (
               <p>
                 Already have an account ?{" "}
                 <Link to="/login" onClick={handleFormReset}>
@@ -257,9 +266,9 @@ function Auth(props: AuthProps) {
             )}
           </div>
         </form>
-        {isSignup && (
+        {signup && (
           <div className={styles.commanImage}>
-            <img src={SignUp} alt="" className={styles.formImage} />
+            <img src={SignUp} alt="signup-image" className={styles.formImage} />
           </div>
         )}
       </div>
@@ -267,4 +276,4 @@ function Auth(props: AuthProps) {
   );
 }
 
-export default Auth;
+export default memo(Auth);

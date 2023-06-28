@@ -1,21 +1,17 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { ArrowRight } from "react-feather";
-import { useNavigate } from "react-router-dom";
-import { PuffLoader } from "react-spinners";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Search } from "react-feather";
+import { PuffLoader } from "react-spinners";
 import { InputBase } from "@mui/material";
 import { getAllProjects } from "../../helpers/db";
 import ProjectModal from "./ProjectModal/ProjectModal";
-import { selectAuthenticate, selectLoading } from "../redux/feature/userSlice";
+import { selectLoading } from "../redux/feature/userSlice";
 import { useAppSelector } from "../redux/hooks";
 import Nodata from "../../assets/nodata.svg";
-import HomeImage from "../../assets/home-image.gif";
 import styles from "./Home.module.css";
 import { Project } from "../../Types/types";
+import Header from "./Header/Header";
 
 function Home() {
-  const navigate = useNavigate();
-  const isauthenticated = useAppSelector(selectAuthenticate);
   const isloading = useAppSelector(selectLoading);
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [projects, setProjects] = useState<Project[] | []>([]);
@@ -23,14 +19,6 @@ function Home() {
   const [projectDetails, setProjectDetails] = useState<Project | {}>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [sortCategory, setSortCategory] = useState("");
-
-  const handleNextButtonClick = () => {
-    if (isauthenticated) {
-      navigate("/account");
-    } else {
-      navigate("/login");
-    }
-  };
 
   const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -58,29 +46,37 @@ function Home() {
     setProjectDetails(project);
   };
 
-  let sortedProjects = [...projects];
+  const sortedProjects = useMemo(() => {
+    let sortedProjects = [...projects];
 
-  switch (sortCategory) {
-    case "a-z":
-      sortedProjects.sort((a, b) => a.title!.localeCompare(b.title!));
-      break;
-    case "z-a":
-      sortedProjects.sort((a, b) => b.title!.localeCompare(a.title!));
-      break;
-    case "most-votes":
-      sortedProjects.sort(
-        (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
-      );
-      break;
-  }
+    switch (sortCategory) {
+      case "a-z":
+        sortedProjects.sort((a, b) => a.title!.localeCompare(b.title!));
+        break;
+      case "z-a":
+        sortedProjects.sort((a, b) => b.title!.localeCompare(a.title!));
+        break;
+      case "most-votes":
+        sortedProjects.sort(
+          (a, b) => (b.likes?.length || 0) - (a.likes?.length || 0)
+        );
+        break;
+      default:
+        break;
+    }
 
-  const filteredProjects = sortedProjects.filter(
-    (project) =>
-      project.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.points?.some((point) =>
-        point.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-  );
+    return sortedProjects;
+  }, [projects, sortCategory]);
+
+  const filteredProjects = useMemo(() => {
+    return sortedProjects.filter(
+      (project) =>
+        project.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.points?.some((point) =>
+          point.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+    );
+  }, [sortedProjects, searchQuery]);
 
   useEffect(() => {
     fetchAllProjects();
@@ -99,29 +95,7 @@ function Home() {
           fetchAllProjects={fetchAllProjects}
         />
       )}
-      <div className={styles.header}>
-        <div className={styles.left}>
-          <p className={styles.heading}>Projects Expo</p>
-          <p className={styles.subHeading}>
-            A centralized platform for{" "}
-            <span className={styles.subText}>
-              software development projects
-            </span>
-            .
-          </p>
-          <p className={styles.subDescription}>
-            All-in-one platform for software development projects, providing a
-            streamlined approach to project management and collaboration.
-          </p>
-          <button onClick={handleNextButtonClick}>
-            {isauthenticated ? "Manage your Projects" : "Get Started"}
-            <ArrowRight />
-          </button>
-        </div>
-        <div className={styles.right}>
-          <img src={HomeImage} alt="Projects" />
-        </div>
-      </div>
+      <Header />
 
       <hr />
 
@@ -177,7 +151,7 @@ function Home() {
                 </div>
               ))
             ) : (
-              <img src={Nodata} alt="" className={styles.nodata} />
+              <img src={Nodata} alt="no data found" className={styles.nodata} />
             )
           ) : (
             <div className="spinner">

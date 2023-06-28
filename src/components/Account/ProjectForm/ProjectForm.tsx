@@ -1,4 +1,4 @@
-import { useRef, useState, ChangeEvent, memo } from "react";
+import { useRef, useState, ChangeEvent, memo, useCallback } from "react";
 import { LinearProgress, TextField } from "@mui/material";
 import { X } from "react-feather";
 import Modal from "../../Modal/Modal";
@@ -7,9 +7,9 @@ import { addOrUpdateProject } from "../../redux/feature/projectSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import { useAppSelector } from "../../redux/hooks";
 import { selectUserDetails } from "../../redux/feature/userSlice";
-import styles from "./ProjectForm.module.css";
 import { toast } from "react-toastify";
 import { ProjectFormProps } from "../../../Types/types";
+import styles from "./ProjectForm.module.css";
 
 function ProjectForm(props: ProjectFormProps) {
   const { uid } = useAppSelector(selectUserDetails);
@@ -18,6 +18,7 @@ function ProjectForm(props: ProjectFormProps) {
   const isEdit = props.isEdit ? true : false;
   const defaults = props.default;
 
+  // State for form values, errors, and progress indicators
   const [values, setValues] = useState({
     thumbnail: defaults?.thumbnail || "",
     title: defaults?.title || "",
@@ -32,57 +33,66 @@ function ProjectForm(props: ProjectFormProps) {
   const [imageUploadProgress, setImageUploadProgress] = useState(0);
   const [submitButtonDisabled, setSetSubmitButtonDisabled] = useState(false);
 
+  // Update a point in the description
   const handlePointUpdate = (value: string, index: number) => {
     const tempPoints = [...values.points];
     tempPoints[index] = value;
     setValues((prev) => ({ ...prev, points: tempPoints }));
   };
 
-  const handleAddPoint = () => {
+  // Add a new point to the description
+  const handleAddPoint = useCallback(() => {
     if (values.points.length > 4) return;
     setValues((prev) => ({ ...prev, points: [...values.points, ""] }));
-  };
+  }, [values.points]);
 
+  // Delete a point from the description
   const handlePointDelete = (index: number) => {
     const tempPoints = [...values.points];
     tempPoints.splice(index, 1);
     setValues((prev) => ({ ...prev, points: tempPoints }));
   };
 
-  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  // Handle file input change for thumbnail upload
+  const handleFileInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
 
-    setImageUploadStarted(true);
-    setErrorMessage("");
-    uploadImage(
-      file,
-      (progress: number) => {
-        setImageUploadProgress(progress);
-      },
-      (url: string) => {
-        setImageUploadStarted(false);
-        setImageUploadProgress(0);
-        setValues((prev) => ({ ...prev, thumbnail: url }));
-      },
-      (error: string) => {
-        setImageUploadStarted(false);
-        setErrorMessage(error);
-      }
-    );
-  };
+      setImageUploadStarted(true);
+      setErrorMessage("");
+      uploadImage(
+        file,
+        (progress: number) => {
+          setImageUploadProgress(progress);
+        },
+        (url: string) => {
+          setImageUploadStarted(false);
+          setImageUploadProgress(0);
+          setValues((prev) => ({ ...prev, thumbnail: url }));
+        },
+        (error: string) => {
+          setImageUploadStarted(false);
+          setErrorMessage(error);
+        }
+      );
+    },
+    []
+  );
 
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    property: string
-  ) => {
-    setValues((prev) => ({
-      ...prev,
-      [property]: event.target.value,
-    }));
-    setErrorMessage("");
-  };
+  // Handle input change for text fields
+  const handleInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>, property: string) => {
+      setValues((prev) => ({
+        ...prev,
+        [property]: event.target.value,
+      }));
+      setErrorMessage("");
+    },
+    []
+  );
 
+  // Check if a URL is valid
   function isValidUrl(url: string) {
     try {
       new URL(url);
@@ -92,6 +102,7 @@ function ProjectForm(props: ProjectFormProps) {
     }
   }
 
+  // Validate the form before submission
   const validateForm = (): boolean => {
     const actualPoints = values.points.filter((item) => item.trim());
 
@@ -146,6 +157,7 @@ function ProjectForm(props: ProjectFormProps) {
     return isValid;
   };
 
+  // Handle form submission
   const handleSubmission = async () => {
     if (!validateForm()) return;
 
@@ -166,6 +178,7 @@ function ProjectForm(props: ProjectFormProps) {
 
       if (props.onClose) props.onClose();
 
+      // Reset form values
       setValues({
         thumbnail: "",
         title: "",
@@ -176,10 +189,12 @@ function ProjectForm(props: ProjectFormProps) {
         likes: [],
       });
     } catch (error: any) {
+      console.log(error.message);
       toast.error(error.message);
     }
   };
 
+  // Handle form cancellation
   const handleCancel = () => {
     // Reset form values
     setValues({
@@ -213,7 +228,7 @@ function ProjectForm(props: ProjectFormProps) {
                     ? values.thumbnail
                     : "https://www.agora-gallery.com/advice/wp-content/uploads/2015/10/image-placeholder-300x200.png"
                 }
-                alt="Thumbnail"
+                alt="project thumbnail"
                 onClick={() => fileInputRef.current?.click()}
               />
               {imageUploadStarted && (

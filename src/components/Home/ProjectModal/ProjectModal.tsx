@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GitHub, Paperclip, Star } from "react-feather";
 import { toast } from "react-toastify";
@@ -9,8 +9,8 @@ import {
   selectAuthenticate,
   selectUserDetails,
 } from "../../redux/feature/userSlice";
-import styles from "./ProjectModal.module.css";
 import { ProjectModalProps } from "../../../Types/types";
+import styles from "./ProjectModal.module.css";
 
 function ProjectModal(props: ProjectModalProps) {
   const { details } = props;
@@ -42,7 +42,7 @@ function ProjectModal(props: ProjectModalProps) {
   };
 
   return (
-    <Modal onClose={() => (props.onClose ? props.onClose() : "")}>
+    <Modal onClose={props.onClose}>
       <div className={styles.container}>
         <p className={styles.heading}>Project Details</p>
         <div className={styles.inner}>
@@ -60,12 +60,10 @@ function ProjectModal(props: ProjectModalProps) {
               <Link target="_blank" to={`${details.github}`}>
                 <GitHub />
               </Link>
-              {details.link ? (
+              {details.link && (
                 <Link target="_blank" to={`${details.link}`}>
                   <Paperclip />
                 </Link>
-              ) : (
-                ""
               )}
 
               <div className={styles.starDetails}>
@@ -101,4 +99,4 @@ function ProjectModal(props: ProjectModalProps) {
   );
 }
 
-export default memo(ProjectModal);
+export default ProjectModal;
