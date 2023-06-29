@@ -10,7 +10,7 @@ function useCheckUserLogout() {
   const navigate = useNavigate();
   useEffect(() => {
     const currentDate = new Date().getTime();
-    const expires = JSON.parse(localStorage.getItem("expireationTime")!);
+    const expires = JSON.parse(localStorage.getItem("expirationTime")!);
 
     if (expires) {
       if (currentDate >= expires) {

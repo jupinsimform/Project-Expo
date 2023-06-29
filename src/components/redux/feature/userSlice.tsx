@@ -33,7 +33,7 @@ const initialState = {
 };
 
 const storeTokenInLocalStorage = (expires: number) => {
-  localStorage.setItem("expireationTime", JSON.stringify(expires));
+  localStorage.setItem("expirationTime", JSON.stringify(expires));
 };
 
 // Thunk action to Signup user
