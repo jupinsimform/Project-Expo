@@ -32,6 +32,10 @@ const initialState = {
   error: null,
 };
 
+const storeTokenInLocalStorage = (expires: number) => {
+  localStorage.setItem("expireationTime", JSON.stringify(expires));
+};
+
 // Thunk action to Signup user
 export const signUpUser = createAsyncThunk(
   "user/signUpUser",
@@ -48,6 +52,10 @@ export const signUpUser = createAsyncThunk(
         { name: values.name, email: values.email },
         userId
       );
+
+      const expires = new Date().getTime() + 24 * 60 * 60 * 1000;
+      storeTokenInLocalStorage(expires);
+
       toast.success("Your registration was successful!", {
         position: "top-right",
         autoClose: 2000,
@@ -76,6 +84,9 @@ export const loginUser = createAsyncThunk(
     try {
       await signInWithEmailAndPassword(auth, values.email!, values.password!);
 
+      const expires = new Date().getTime() + 24 * 60 * 60 * 1000;
+      storeTokenInLocalStorage(expires);
+
       toast.success("Logged in successfully", {
         position: "top-right",
         autoClose: 2000,
@@ -94,6 +105,7 @@ export const loginUser = createAsyncThunk(
       } else {
         toast.error(error.message);
       }
+
       return rejectWithValue(error.message);
     }
   }
@@ -105,6 +117,7 @@ export const fetchUserDetails = createAsyncThunk(
   async (uid: string, { rejectWithValue }) => {
     try {
       const userDetails = await getUserFromDatabase(uid);
+
       return userDetails;
     } catch (error: any) {
       return rejectWithValue(error.message);

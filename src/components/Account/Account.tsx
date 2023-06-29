@@ -24,15 +24,15 @@ import {
 import Nodata from "../../assets/nodata.svg";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import styles from "./Account.module.css";
-import { Project, AccountProps } from "../../Types/types";
+import { Project } from "../../Types/types";
 import UserProfile from "./UserProfile/UserProfile";
+import useCheckUserLogout from "../../Hooks/useCheckUserLogout";
 
-function Account({ timeoutId }: AccountProps) {
+function Account() {
   const userDetails = useAppSelector(selectUserDetails);
   const authenticate = useAppSelector(selectAuthenticate);
   const loading = useAppSelector(selectLoading);
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
 
   const [showProjectForm, setShowProjectForm] = useState(false);
@@ -40,14 +40,13 @@ function Account({ timeoutId }: AccountProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isEditProjectModal, setIsEditProjectModal] = useState(false);
   const [editProject, setEditProject] = useState<Project | {}>({});
+  useCheckUserLogout();
 
   // Logout user
   const handleLogout = async () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
     await signOut(auth);
     dispatch(logout());
+    localStorage.clear();
   };
 
   // Go back to previous page

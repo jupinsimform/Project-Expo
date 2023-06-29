@@ -10,6 +10,7 @@ import Nodata from "../../assets/nodata.svg";
 import styles from "./Home.module.css";
 import { Project } from "../../Types/types";
 import Header from "./Header/Header";
+import useCheckUserLogout from "../../Hooks/useCheckUserLogout";
 
 function Home() {
   const isloading = useAppSelector(selectLoading);
@@ -19,6 +20,7 @@ function Home() {
   const [projectDetails, setProjectDetails] = useState<Project | {}>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [sortCategory, setSortCategory] = useState("");
+  useCheckUserLogout();
 
   const handleSearchQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);

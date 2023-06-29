@@ -5,7 +5,6 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { auth } from "./helpers/db";
 import {
   fetchUserDetails,
-  logout,
   selectAuthenticate,
   selectLoading,
 } from "./components/redux/feature/userSlice";
@@ -22,15 +21,6 @@ function App() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const isAuthenticated = useAppSelector(selectAuthenticate);
   const isLoading = useAppSelector(selectLoading);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
-  const storeTokenInLocalStorage = (token: string, expirationTime: number) => {
-    const tokenData = {
-      token,
-      expirationTime,
-    };
-    localStorage.setItem("userToken", JSON.stringify(tokenData));
-  };
 
   useEffect(() => {
     const listener = auth.onAuthStateChanged(async (user) => {
@@ -39,29 +29,12 @@ function App() {
       } else {
         dispatch(fetchUserDetails(user.uid));
 
-        const userToken = await user.getIdToken();
-
-        const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000;
-        storeTokenInLocalStorage(userToken, expirationTime);
-
         setIsDataLoaded(true);
-
-        const tokenExpirationTimeout = setTimeout(() => {
-          auth.signOut();
-
-          dispatch(logout());
-        }, expirationTime - new Date().getTime());
-
-        setTimeoutId(tokenExpirationTimeout);
-
-        return () => {
-          clearTimeout(tokenExpirationTimeout);
-        };
       }
     });
 
     return () => listener();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="App">
@@ -75,10 +48,7 @@ function App() {
               </>
             )}
             <Route path="/" element={<Home />} />
-            <Route
-              path="/account"
-              element={<Account timeoutId={timeoutId} />}
-            />
+            <Route path="/account" element={<Account />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         ) : (
